@@ -1,4 +1,4 @@
-##Java中Http请求和响应的参数处理  
+##Java中Http请求和响应的参数处理过程分析  
 
 ###HTTP 报文格式
 ![](./resources/http-message.png)  
@@ -189,7 +189,7 @@ public class HttpDemo implements Runnable {
 入口类: `org.springframework.web.servlet.DispatcherServlet`  
 ![](./resources/DispatcherServlet.png)  
 基于本文主题，我们从`FrameworkServlet`类的一系列`doXXX`方法开始看`SpringMVC`帮我们做了些啥  
-```Java
+```java
 /**
  * Delegate GET requests to processRequest/doService.
  * <p>Will also be invoked by HttpServlet's default implementation of {@code doHead},
@@ -238,7 +238,7 @@ protected final void doDelete(HttpServletRequest request, HttpServletResponse re
 }
 ``` 
 可以看到，这些请求的操作函数，最后都统一的调用了`processRequest`函数  
-```Java
+```java
 /**
  * Process this request, publishing an event regardless of the outcome.
  * <p>The actual event handling is performed by the abstract
@@ -302,7 +302,7 @@ protected final void processRequest(HttpServletRequest request, HttpServletRespo
 }
 ```  
 我们继续看`doService`
-```Java
+```java
 /**
  * Subclasses must implement this method to do the work of request handling,
  * receiving a centralized callback for GET, POST, PUT and DELETE.
@@ -401,6 +401,7 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
             processedRequest = checkMultipart(request);
             multipartRequestParsed = (processedRequest != request);
 
+            //这一句是确定该次请求匹配到的handler也就是我们Controller
             // Determine handler for the current request.
             mappedHandler = getHandler(processedRequest);
             if (mappedHandler == null || mappedHandler.getHandler() == null) {
@@ -408,6 +409,7 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
                 return;
             }
 
+            //这一句是获取处理该handler的适配器
             // Determine handler adapter for the current request.
             HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
@@ -471,8 +473,13 @@ protected void doDispatch(HttpServletRequest request, HttpServletResponse respon
     }
 }
 ```  
-org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
-本次重点关注的是`handle`函数，具体是`org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter`的实现  
+本次重点关注的是`handle`函数，是接口`HandlerAdapter`定义的函数  
+![](./resources/HandlerAdapter1.png)    
+
+`HandlerAdapter`的实现类
+![](./resources/HandlerAdapter2.png)  
+
+这里我们要跟踪的具体是`org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter`的实现  
 ```java
 @Override
 public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -529,7 +536,9 @@ protected ModelAndView invokeHandlerMethod(HttpServletRequest request, HttpServl
     return mav;
 }
 ```  
-我们重点看`SpinrgMVC`是怎么调用匹配到的函数的，继续看`invokeHandlerMethod`，该函数是`org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.ServletHandlerMethodInvoker`的父类`org.springframework.web.bind.annotation.support.HandlerMethodInvoker`声明并实现的 
+我们重点看`SpinrgMVC`是怎么调用匹配到的函数的，继续看`invokeHandlerMethod`，该函数是`org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.ServletHandlerMethodInvoker`的父类`org.springframework.web.bind.annotation.support.HandlerMethodInvoker`声明并实现的  
+![](./resources/ServletHandlerMethodInvoker.png)  
+ 继续看`HandlerMethodInvoker.invokeHandlerMethod`  
 ```java
 public final Object invokeHandlerMethod(Method handlerMethod, Object handler,
         NativeWebRequest webRequest, ExtendedModelMap implicitModel) throws Exception {
@@ -734,7 +743,133 @@ private Object[] resolveHandlerArguments(Method handlerMethod, Object handler,
     return args;
 }
 ```
-终于找到重点了。。。我们重点关注下我们常用的几个注解是怎么处理的`RequestHeader`、`PathVariable`、`RequestParam`、`RequestBody`以及默认的无注解时的参数处理
+终于找到重点了。。。我们重点关注下我们常用的这两个注解是怎么处理的`RequestParam`、`RequestBody`以及默认的无注解时的参数处理  
+`RequestParam`其实也就是调用的`HttpServletRequest.getParameterXXX`，我们再看看`RequestBody`  
+```java
+private Object readWithMessageConverters(MethodParameter methodParam, HttpInputMessage inputMessage, Class<?> paramType)
+    throws Exception {
+
+MediaType contentType = inputMessage.getHeaders().getContentType();
+if (contentType == null) {
+    StringBuilder builder = new StringBuilder(ClassUtils.getShortName(methodParam.getParameterType()));
+    String paramName = methodParam.getParameterName();
+    if (paramName != null) {
+        builder.append(' ');
+        builder.append(paramName);
+    }
+    throw new HttpMediaTypeNotSupportedException(
+            "Cannot extract parameter (" + builder.toString() + "): no Content-Type found");
+}
+
+List<MediaType> allSupportedMediaTypes = new ArrayList<MediaType>();
+if (this.messageConverters != null) {
+    for (HttpMessageConverter<?> messageConverter : this.messageConverters) {
+        allSupportedMediaTypes.addAll(messageConverter.getSupportedMediaTypes());
+        if (messageConverter.canRead(paramType, contentType)) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Reading [" + paramType.getName() + "] as \"" + contentType
+                        +"\" using [" + messageConverter + "]");
+            }
+            return messageConverter.read((Class) paramType, inputMessage);
+        }
+    }
+}
+throw new HttpMediaTypeNotSupportedException(contentType, allSupportedMediaTypes);
+}
+```
+这里出现了`HttpMessageConverter`  
+![](./resources/HttpMessageConverter.png)  
+看接口就大概猜出来这个接口是干嘛的了吧？也就是根据`Content-Type`匹配到对应的`HttpMessageConverter`然后解析出需要的`Body`参数  
+再看看没有注解时`SpringMVC`怎么处理所需的请求参数的。  
+```java
+//如果参数上没有用到 SpringMVC 自带的那些注解，则 annotationsFound 为0 
+if (annotationsFound == 0) {
+    //开始解析参数
+    Object argValue = resolveCommonArgument(methodParam, webRequest);
+    if (argValue != WebArgumentResolver.UNRESOLVED) {
+        args[i] = argValue;
+    }
+    else if (defaultValue != null) {
+        args[i] = resolveDefaultValue(defaultValue);
+    }
+    else {
+        Class<?> paramType = methodParam.getParameterType();
+        if (Model.class.isAssignableFrom(paramType) || Map.class.isAssignableFrom(paramType)) {
+            if (!paramType.isAssignableFrom(implicitModel.getClass())) {
+                throw new IllegalStateException("Argument [" + paramType.getSimpleName() + "] is of type " +
+                        "Model or Map but is not assignable from the actual model. You may need to switch " +
+                        "newer MVC infrastructure classes to use this argument.");
+            }
+            args[i] = implicitModel;
+        }
+        else if (SessionStatus.class.isAssignableFrom(paramType)) {
+            args[i] = this.sessionStatus;
+        }
+        else if (HttpEntity.class.isAssignableFrom(paramType)) {
+            args[i] = resolveHttpEntityRequest(methodParam, webRequest);
+        }
+        else if (Errors.class.isAssignableFrom(paramType)) {
+            throw new IllegalStateException("Errors/BindingResult argument declared " +
+                    "without preceding model attribute. Check your handler method signature!");
+        }
+        else if (BeanUtils.isSimpleProperty(paramType)) {
+            paramName = "";
+        }
+        else {
+            attrName = "";
+        }
+    }
+}
+```
+我们继续看`resolveCommonArgument`  
+```java
+protected Object resolveCommonArgument(MethodParameter methodParameter, NativeWebRequest webRequest)
+    throws Exception {
+
+// Invoke custom argument resolvers if present...
+if (this.customArgumentResolvers != null) {
+    for (WebArgumentResolver argumentResolver : this.customArgumentResolvers) {
+        Object value = argumentResolver.resolveArgument(methodParameter, webRequest);
+        if (value != WebArgumentResolver.UNRESOLVED) {
+            return value;
+        }
+    }
+}
+
+// Resolution of standard parameter types...
+Class<?> paramType = methodParameter.getParameterType();
+Object value = resolveStandardArgument(paramType, webRequest);
+if (value != WebArgumentResolver.UNRESOLVED && !ClassUtils.isAssignableValue(paramType, value)) {
+    throw new IllegalStateException("Standard argument type [" + paramType.getName() +
+            "] resolved to incompatible value of type [" + (value != null ? value.getClass() : null) +
+            "]. Consider declaring the argument type in a less specific fashion.");
+}
+return value;
+}
+```  
+出现了`WebArgumentResolver`，该接口用来自定义参数处理逻辑用的  
+![](./resources/WebArgumentResolver.png)   
+  
+当没有自定义的参数解析类时  
+```java
+else if (BeanUtils.isSimpleProperty(paramType)) {
+    paramName = "";
+}
+```
+这是干嘛呢？我们继续看  
+```java
+if (paramName != null) {
+    args[i] = resolveRequestParam(paramName, required, defaultValue, methodParam, webRequest, handler);
+}
+```  
+哈哈，，，没有任何注解来处理参数时，`SpringMVC`就按照`RequestParam`的方式来处理了。
+
+
+
+
+
+
+
 
 
 

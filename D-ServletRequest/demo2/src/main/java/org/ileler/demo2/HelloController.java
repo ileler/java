@@ -1,6 +1,7 @@
 package org.ileler.demo2;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +33,13 @@ public class HelloController {
 
     @RequestMapping(value = "/hello11", method = RequestMethod.POST)
     @ResponseBody
-    public String post1(@RequestBody Map<String, String> map) {
+    public String post11(@RequestBody Map<String, String> map) {
+        return "post response";
+    }
+
+    @RequestMapping(value = "/hello21", method = RequestMethod.POST)
+    @ResponseBody
+    public String post21(@RequestBody MultiValueMap<String, String[]> map) {
         return "post response";
     }
 
@@ -45,6 +52,12 @@ public class HelloController {
     @RequestMapping(value = "/hello13", method = RequestMethod.POST)
     @ResponseBody
     public String post(@JsonParam("arg1") String arg1, @JsonParam("arg2") String arg2, @RequestBody Map<String, String> map) {
+        return "post response";
+    }
+
+    @RequestMapping(value = "/hello14", method = RequestMethod.POST)
+    @ResponseBody
+    public String post(@RequestBody Map<String, String> map, @JsonParam("arg1") String arg1, @JsonParam("arg2") String arg2) {
         return "post response";
     }
 
