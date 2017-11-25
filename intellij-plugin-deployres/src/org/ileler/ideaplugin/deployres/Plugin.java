@@ -33,7 +33,7 @@ public class Plugin extends AnAction {
     public void update(AnActionEvent event) {
         VirtualFile vFile = CommonDataKeys.VIRTUAL_FILE.getData(event.getDataContext());
         cfgFile = getCfgFile(event.getProject().getBaseDir(), vFile);
-        focusFile = new File(vFile.getPath());
+        focusFile = vFile == null ? null : new File(vFile.getPath());
         event.getPresentation().setEnabled(cfgFile != null);
         event.getPresentation().setVisible(cfgFile != null);
     }
@@ -76,7 +76,7 @@ public class Plugin extends AnAction {
             if (src.getName().equals(CFG_NAME)) return;
             des.getParentFile().mkdirs();
             try (InputStream is = new FileInputStream(src);
-                 OutputStream os = new FileOutputStream(des);) {
+                 OutputStream os = new FileOutputStream(des)) {
                 byte[] bs = new byte[2048];
                 int len = -1;
                 while ((len = is.read(bs)) != -1) {
@@ -90,6 +90,7 @@ public class Plugin extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent event) {
+        if (focusFile == null)  return;
         Project project = event.getProject();
         StringBuffer _message = new StringBuffer();
         String _path = focusFile.getPath();
