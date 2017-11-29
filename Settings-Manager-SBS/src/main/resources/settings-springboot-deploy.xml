@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <localRepository>/home/ubuntu/maven_repo_springboot</localRepository>
+
+    <servers>
+        <server>
+            <id>172.16.2.16</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.16:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.18</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.18:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.21</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.21:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.27</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.27:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.28</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.28:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.29</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.29:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.30</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.30:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.31</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.31:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.32</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.32:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>172.16.2.33</id>
+            <username>mpr</username>
+            <password>Mprwebsite2008</password>
+            <configuration url="scp://172.16.2.33:8585/home/mpr/ms">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+    </servers>
+
+    <mirrors>
+        <mirror>
+            <id>nexus</id>
+            <name>internal nexus repository</name>
+            <url>http://172.16.6.17:8081/repository/maven-public/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
+
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <repositories>
+                <repository>
+                    <id>nexus</id>
+                    <name>local private nexus</name>
+                    <url>http://172.16.6.17:8081/repository/maven-public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>nexus</id>
+                    <!--http://172.16.6.17:8080/nexus/content/groups/public-->
+                    <url>http://172.16.6.17:8081/repository/maven-public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+
+        <profile>
+            <id>com.mpr.api.gateway</id>
+            <properties>
+                <service.sid>172.16.2.16</service.sid>
+                <service.dir>com.mpr.api.gateway</service.dir>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.api.authentication</id>
+            <properties>
+                <service.sid>172.16.2.16</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.api.authentication</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.key.manage.gateway</id>
+            <properties>
+                <service.sid>172.16.2.16</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.dir>com.mpr.key.manage.gateway</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.ticket.authentication</id>
+            <properties>
+                <service.sid>172.16.2.16</service.sid>
+                <service.port>11030</service.port>
+                <service.dport>11035</service.dport>
+                <service.dir>com.mpr.ticket.authentication</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.device.manage</id>
+            <properties>
+                <service.sid>172.16.2.18</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.device.manage</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.device.authentication</id>
+            <properties>
+                <service.sid>172.16.2.18</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.device.authentication</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.notification</id>
+            <properties>
+                <service.sid>172.16.2.18</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.dir>com.mpr.notification</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.resource.distribution</id>
+            <properties>
+                <service.sid>172.16.2.21</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.resource.distribution</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.resource.authentication</id>
+            <properties>
+                <service.sid>172.16.2.21</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.resource.authentication</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.content.preprocessor.system</id>
+            <properties>
+                <service.sid>172.16.2.21</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.dir>com.mpr.content.preprocessor.system</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.digital.certificate</id>
+            <properties>
+                <service.sid>172.16.2.21</service.sid>
+                <service.port>11030</service.port>
+                <service.dport>11035</service.dport>
+                <service.dir>com.mpr.digital.certificate</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.api.gateway</id>
+            <properties>
+                <service.sid>172.16.2.27</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.panmedia.api.gateway</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.login</id>
+            <properties>
+                <service.sid>172.16.2.27</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.panmedia.login</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.consumer</id>
+            <properties>
+                <service.sid>172.16.2.27</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.dir>com.mpr.panmedia.consumer</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.notification</id>
+            <properties>
+                <service.sid>172.16.2.28</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.panmedia.notification</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.message</id>
+            <properties>
+                <service.sid>172.16.2.28</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.panmedia.message</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.bookseller</id>
+            <properties>
+                <service.sid>172.16.2.29</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.panmedia.bookseller</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.bookseller.account</id>
+            <properties>
+                <service.sid>172.16.2.29</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.panmedia.bookseller.account</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.shop</id>
+            <properties>
+                <service.sid>172.16.2.29</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.dir>com.mpr.panmedia.shop</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.main.business</id>
+            <properties>
+                <service.sid>172.16.2.29</service.sid>
+                <service.port>11030</service.port>
+                <service.dport>11035</service.dport>
+                <service.dir>com.mpr.panmedia.main.business</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.order</id>
+            <properties>
+                <service.sid>172.16.2.30</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.panmedia.order</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.finance</id>
+            <properties>
+                <service.sid>172.16.2.30</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.panmedia.finance</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.after.sales</id>
+            <properties>
+                <service.sid>172.16.2.30</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.dir>com.mpr.panmedia.after.sales</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.goods</id>
+            <properties>
+                <service.sid>172.16.2.31</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.panmedia.goods</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.goods.mpr</id>
+            <properties>
+                <service.sid>172.16.2.31</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.panmedia.goods.mpr</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.goods.pbook</id>
+            <properties>
+                <service.sid>172.16.2.31</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.dir>com.mpr.panmedia.goods.pbook</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.goods.classification</id>
+            <properties>
+                <service.sid>172.16.2.31</service.sid>
+                <service.port>11030</service.port>
+                <service.dport>11035</service.dport>
+                <service.dir>com.mpr.panmedia.goods.classification</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.sales.strategy</id>
+            <properties>
+                <service.sid>172.16.2.32</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.panmedia.sales.strategy</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.isli.content</id>
+            <properties>
+                <service.sid>172.16.2.32</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.panmedia.isli.content</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.image</id>
+            <properties>
+                <service.sid>172.16.2.33</service.sid>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.dir>com.mpr.panmedia.image</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.address</id>
+            <properties>
+                <service.sid>172.16.2.33</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.dir>com.mpr.panmedia.address</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>com.mpr.panmedia.collect</id>
+            <properties>
+                <service.sid>172.16.2.33</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.dir>com.mpr.panmedia.collect</service.dir>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>nexus</activeProfile>
+    </activeProfiles>
+
+</settings>
