@@ -34,7 +34,15 @@ public class ProfileDAOImpl implements ProfileDAO {
     private void mkdir(Env env, Profile profile) {
         Server server = serverDAO.get(env.getName(), profile.getSid());
         if (server == null)     return;
-        JschUtil.exec(server.getUrl(), server.getUsername(), server.getPassword(), "mkdir -p " + profile.getDir());
+        String dir = profile.getDir();
+        if (StringUtils.isEmpty(dir))   return;
+        String dest;
+        if (dir.startsWith("/")) {
+            dest = dir;
+        } else {
+            dest = server.getSpath() + "/" + dir;
+        }
+        JschUtil.exec(server, "mkdir -p " + dest);
     }
 
     @Override

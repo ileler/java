@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Env } from 'app/domain/env';
 import { Profile } from 'app/domain/profile';
 import { Server } from 'app/domain/server';
@@ -13,6 +13,8 @@ import { ServerService } from 'app/services/server.service';
   providers: [EnvService, ProfileService, ServerService]
 })
 export class AppComponent {
+
+    @ViewChild("pdt") pdt: any;
 
     allEnv: any[] = [];
 
@@ -76,7 +78,7 @@ export class AppComponent {
     }
 
     changeCurrentEnv() {
-      this.allServer = [{label:'ALL', value:{id: null}}];
+      this.allServer = (!this.envs || this.envs.length < 1) ? [] : [{label:'ALL', value:{id: null}}];
       if (this.currentEnv) {
         this.serverService.get(this.currentEnv.name).then(
           (respObj) => {
@@ -123,6 +125,12 @@ export class AppComponent {
     saveEnv() {
         let envs = [...this.envs];
         if(this.newEnv) {
+            for(let i = 0, j = envs.length; i < j; i++) {
+              if (envs[i].name == this.env.name) {
+                alert('Env already exists.');
+                return false;
+              }
+            }
             envs.push(this.env);
             this.envService.add(this.env).then(
               (respObj) => {
@@ -197,8 +205,14 @@ export class AppComponent {
     saveProfile() {
         let profiles = [...this.profiles];
         let _profile = this.cloneProfile(this.profile);
-        _profile.sid = this.profile.sid.id;
+        _profile.sid = this.profile.sid && this.profile.sid.id || this.servers[0].id;
         if(this.newProfile) {
+            for(let i = 0, j = profiles.length; i < j; i++) {
+              if (profiles[i].id == _profile.id) {
+                alert('Profile already exists.');
+                return false;
+              }
+            }
             profiles.push(_profile);
             this.profileService.add(this.currentEnv.name, _profile).then(
               (respObj) => {
@@ -242,6 +256,9 @@ export class AppComponent {
     onRowSelectProfile(event) {
         this.newProfile = false;
         this.profile = this.cloneProfile(event.data);
+        this.servers.forEach((server) => {
+          if (server.id == this.profile.sid) this.profile.sid = server;
+        });
         this.displayProfileDialog = true;
     }
 
@@ -268,28 +285,41 @@ export class AppComponent {
 
     saveServer() {
         let servers = [...this.servers];
+        delete this.server['url'];
         if(this.newServer) {
-            servers.push(this.server);
+            for(let i = 0, j = servers.length; i < j; i++) {
+              if (servers[i].id == this.server.id) {
+                alert('Server already exists.');
+                return false;
+              }
+            }
             this.serverService.add(this.currentEnv.name, this.server).then(
-              (respObj) => {
+              ((respObj) => {
                 console.log(respObj);
-              },
+                if (respObj.success()) {
+                  servers.push(respObj.getData());
+                  this.allServer.push({label:respObj.getData().id, value:respObj.getData()});
+                  this.servers = servers;
+                }
+              }).bind(this),
               (error) => {
                 console.log(error);
               }
             );
         } else {
-            servers[this.findSelectedServerIndex()] = this.server;
             this.serverService.mod(this.currentEnv.name, this.server).then(
-              (respObj) => {
-                console.log(respObj);
-              },
+              ((respObj) => {
+                  console.log(respObj);
+                  if (respObj.success()) {
+                    servers[this.findSelectedServerIndex()] = respObj.getData();
+                    this.servers = servers;
+                  }
+              }).bind(this),
               (error) => {
                 console.log(error);
               }
             );
         }
-        this.servers = servers;
         this.server = null;
         this.displayServerDialog = false;
     }
@@ -305,8 +335,15 @@ export class AppComponent {
         );
         let index = this.findSelectedServerIndex();
         this.servers = this.servers.filter((val,i) => i!=index);
+        this.allServer = this.allServer.filter((val,i) => val.label != this.selectedServer.id);
+        if (this.currentServer.id == this.selectedServer.id) this.currentServer = this.allServer[0].value;
+        this.serverChange();
         this.server = null;
         this.displayServerDialog = false;
+    }
+
+    serverChange() {
+      this.pdt.filter(this.currentServer&&this.currentServer.id||null,'sid','equals');
     }
 
     onRowSelectServer(event) {
@@ -337,5 +374,5 @@ export class PrimeProfile implements Profile {
 }
 
 export class PrimeServer implements Server {
-  constructor(public id?, public url?, public username?, public password?, public configuration?) {}
+  constructor(public id?, public host?, public port?, public shome?, public username?, public password?, public configuration?) {}
 }

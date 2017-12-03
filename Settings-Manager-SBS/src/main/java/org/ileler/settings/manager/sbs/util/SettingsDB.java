@@ -43,48 +43,50 @@ public class SettingsDB {
         if (StringUtils.isEmpty(path)) {
             throw new NullPointerException("env invalid.");
         }
-        File file = new File(path);
-        if (!file.exists()) {
-            FileOutputStream fileOutputStream = null;
-            FileInputStream fileInputStream = null;
-            try {
-                fileOutputStream = new FileOutputStream(file);
-                String template = env.getTemplate();
-                if (StringUtils.isEmpty(template)) {
-                    template = SettingsDB.class.getResource("/settings.xml").getFile();
-                }
-                File templateFile = new File(template);
-                if (templateFile.exists() && templateFile.isFile()) {
-                    fileInputStream = new FileInputStream(templateFile);
-                    byte[] bytes = new byte[1024];
-                    int length = -1;
-                    while((length = fileInputStream.read(bytes)) > 0) {
-                        fileOutputStream.write(bytes, 0, length);
+        synchronized (path) {
+            File file = new File(path);
+            if (!file.exists()) {
+                FileOutputStream fileOutputStream = null;
+                FileInputStream fileInputStream = null;
+                try {
+                    fileOutputStream = new FileOutputStream(file);
+                    String template = env.getTemplate();
+                    if (StringUtils.isEmpty(template)) {
+                        template = SettingsDB.class.getResource("/settings.xml").getFile();
                     }
+                    File templateFile = new File(template);
+                    if (templateFile.exists() && templateFile.isFile()) {
+                        fileInputStream = new FileInputStream(templateFile);
+                        byte[] bytes = new byte[1024];
+                        int length = -1;
+                        while((length = fileInputStream.read(bytes)) > 0) {
+                            fileOutputStream.write(bytes, 0, length);
+                        }
+                    }
+                } finally {
+                    if (fileInputStream != null) fileInputStream.close();
+                    if (fileOutputStream != null) fileOutputStream.close();
                 }
-            } finally {
-                if (fileInputStream != null) fileInputStream.close();
-                if (fileOutputStream != null) fileOutputStream.close();
             }
-        }
 
-        document = new SAXReader().read(filePath = path);
-        Element settings = document.getRootElement();
-        if (settings == null || !"settings".equalsIgnoreCase(settings.getName())) {
-            throw new IllegalArgumentException("template invalid.");
+            document = new SAXReader().read(filePath = path);
+            Element settings = document.getRootElement();
+            if (settings == null || !"settings".equalsIgnoreCase(settings.getName())) {
+                throw new IllegalArgumentException("template invalid.");
+            }
+            servers = settings.element("servers");
+            if (servers == null) {
+                servers = settings.addElement("servers");
+            }
+            loadServers();
+            if (serverMap == null) serverMap = new Hashtable<>(0);
+            profiles = settings.element("profiles");
+            if (profiles == null) {
+                profiles = settings.addElement("profiles");
+            }
+            loadProfiles();
+            if (profileMap == null) profileMap = new Hashtable<>(0);
         }
-        servers = settings.element("servers");
-        if (servers == null) {
-            servers = settings.addElement("servers");
-        }
-        loadServers();
-        if (serverMap == null) serverMap = new Hashtable<>(0);
-        profiles = settings.element("profiles");
-        if (profiles == null) {
-            profiles = settings.addElement("profiles");
-        }
-        loadProfiles();
-        if (profileMap == null) profileMap = new Hashtable<>(0);
     }
 
     public List<Server> getServers() {

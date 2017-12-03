@@ -13,7 +13,6 @@ export class ServerService {
   private env = '/server';
 
   constructor(
-    private appState: AppState,
     private httpService: HttpService
   ) {}
 
@@ -29,8 +28,8 @@ export class ServerService {
     return this.httpService.put(this.env, null, { env: env }, data);
   }
 
-  public del(env: string, name: string): PromiseExt<RespObjModel> {
-    return this.httpService.delete(this.env, null, { env: env, name: name });
+  public del(env: string, id: string): PromiseExt<RespObjModel> {
+    return this.httpService.delete(this.env, null, { env: env, id: id });
   }
 
 }

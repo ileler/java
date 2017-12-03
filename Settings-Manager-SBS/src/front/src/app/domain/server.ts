@@ -1,6 +1,8 @@
 export interface Server {
     id?;
-    url?;
+    host?;
+    port?;
+    shome?;
     username?;
     password?;
     configuration?;

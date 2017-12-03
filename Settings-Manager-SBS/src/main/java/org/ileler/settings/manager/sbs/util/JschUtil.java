@@ -6,12 +6,11 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
+import org.ileler.settings.manager.sbs.model.Server;
 import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Copyright:   Copyright 2007 - 2017 MPR Tech. Co. Ltd. All Rights Reserved.
@@ -60,23 +59,22 @@ public class JschUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(connect("scp://172.16.2.21:22/home/mpr/ms", "mpr", "Mprwebsite2008"));
+        System.out.println(connect(new Server("test", "scp://172.16.2.21:22/home/mpr/ms", "mpr", "Mprwebsite2008", "")));
         System.out.println("------------------------------------------------------------------------------------------------------");
-        System.out.println(exec("scp://172.16.2.21:8585/home/mpr/ms", "mpr", "Mprwebsite2007", "ls -l"));
+        System.out.println(exec(new Server("test","scp://172.16.2.21:8585/home/mpr/ms", "mpr", "Mprwebsite2007", ""), "ls -l"));
     }
 
-    private static Session openConnectionInternal(String url, String username,
-                                   String password) throws JSchException {
-        Matcher matcher = Pattern.compile("(?:scp://)?(\\d+.*?)(?::(\\d+.*?))?/.*").matcher(url);
-        int count = matcher.find() ? matcher.groupCount() : -1;
-        String host = count > 0 ? matcher.group(1) : null;
-        String port = count > 1 ? matcher.group(2) : null;
-        if (StringUtils.isEmpty(host))  return null;
+    private static Session openConnectionInternal(Server server) throws JSchException {
+        String username = server == null ? null : server.getUsername();
+        String password = server == null ? null : server.getPassword();
+        String host = server == null ? null : server.getHost();
+        Integer port = server == null ? null : server.getPort();
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(host))  return null;
 
         JSch jsch = new JSch();
         Properties config = new Properties();
         config.setProperty( "StrictHostKeyChecking", "no" );
-        Session session = jsch.getSession(username, host, StringUtils.isEmpty(port) ? 22 : Integer.valueOf(port));
+        Session session = jsch.getSession(username, host, port == null ? 22 : port);
         session.setConfig(config);
         session.setPassword(password);
         session.setUserInfo(new MyUserInfo());
@@ -84,10 +82,9 @@ public class JschUtil {
         return session;
     }
 
-    public static String connect(String url, String username,
-            String password) {
+    public static String connect(Server server) {
         try {
-            Session session = openConnectionInternal(url, username, password);
+            Session session = openConnectionInternal(server);
 
             Channel channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand("pwd");
@@ -108,10 +105,9 @@ public class JschUtil {
         }
     }
 
-    public static String exec(String url, String username,
-                                  String password, String command) {
+    public static String exec(Server server, String command) {
         try {
-            Session session = openConnectionInternal(url, username, password);
+            Session session = openConnectionInternal(server);
 
             Channel channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
@@ -131,6 +127,7 @@ public class JschUtil {
             return e.getMessage();
         }
     }
+
     private static int exitCode(InputStream in, Channel channel) {
         try {
             byte[] tmp = new byte[1024];

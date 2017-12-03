@@ -97,7 +97,7 @@ public class ServerDAOImpl implements ServerDAO {
     public String valid(String envNmae, String id) {
         Server server = get(envNmae, id);
         if (server == null)     return null;
-        return JschUtil.connect(server.getUrl(), server.getUsername(), server.getPassword());
+        return JschUtil.connect(server);
     }
 
 }

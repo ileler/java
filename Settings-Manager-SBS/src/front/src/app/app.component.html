@@ -7,11 +7,11 @@
   <p-column field="path" header="PATH"></p-column>
   <p-column field="template" header="TEMPLATE"></p-column>
 </p-dataTable>
-<p-dialog header="Profile Details" [(visible)]="displayEnvDialog" [responsive]="true" showEffect="fade" [modal]="true">
+<p-dialog header="Env Details" [(visible)]="displayEnvDialog" [responsive]="true" showEffect="fade" [modal]="true">
   <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="env">
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="env-name">NAME</label></div>
-      <div class="ui-grid-col-8"><input pInputText id="env-name" [(ngModel)]="env.name" /></div>
+      <div class="ui-grid-col-8"><input pInputText id="env-name" [(ngModel)]="env.name" [disabled]="!newEnv"/></div>
     </div>
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="env-path">PATH</label></div>
@@ -19,7 +19,7 @@
     </div>
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="env-template">TEMPLATE</label></div>
-      <div class="ui-grid-col-8"><input pInputText id="env-template" [(ngModel)]="env.template" /></div>
+      <div class="ui-grid-col-8"><textarea pInputTextarea id="env-template" [(ngModel)]="env.template"></textarea></div>
     </div>
   </div>
   <p-footer>
@@ -40,24 +40,34 @@
   <p-header>
     Servers
     <div class="ui-helper-clearfix" style="width:100%">
-      <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddServer()" label="Add"></button>
+      <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddServer()" label="Add" [disabled]="!envs  || envs.length < 1"></button>
     </div>
   </p-header>
   <p-column field="id" header="ID"></p-column>
-  <p-column field="url" header="URL"></p-column>
+  <p-column field="host" header="HOST"></p-column>
+  <p-column field="port" header="PORT"></p-column>
+  <p-column field="shome" header="SHOME"></p-column>
   <p-column field="username" header="USERNAME"></p-column>
   <p-column field="password" header="PASSWORD"></p-column>
   <!--<p-column field="configuration" header="CONFIGURATION"></p-column>-->
 </p-dataTable>
-<p-dialog header="Profile Details" [(visible)]="displayServerDialog" [responsive]="true" showEffect="fade" [modal]="true">
+<p-dialog header="Server Details" [(visible)]="displayServerDialog" [responsive]="true" showEffect="fade" [modal]="true">
   <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="server">
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="server-id">ID</label></div>
-      <div class="ui-grid-col-8"><input pInputText id="server-id" [(ngModel)]="server.id" /></div>
+      <div class="ui-grid-col-8"><input pInputText id="server-id" [(ngModel)]="server.id" [disabled]="!newServer"/></div>
     </div>
     <div class="ui-grid-row">
-      <div class="ui-grid-col-4"><label for="server-url">URL</label></div>
-      <div class="ui-grid-col-8"><input pInputText id="server-url" [(ngModel)]="server.url" /></div>
+      <div class="ui-grid-col-4"><label for="server-host">HOST</label></div>
+      <div class="ui-grid-col-8"><input pInputText id="server-host" [(ngModel)]="server.host" /></div>
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4"><label for="server-port">PORT</label></div>
+      <div class="ui-grid-col-8"><input pInputText id="server-port" [(ngModel)]="server.port" /></div>
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4"><label for="server-shome">SHOME</label></div>
+      <div class="ui-grid-col-8"><input pInputText id="server-shome" [(ngModel)]="server.shome" /></div>
     </div>
     <div class="ui-grid-row">
       <div class="ui-grid-col-4"><label for="server-username">USERNAME</label></div>
@@ -82,14 +92,17 @@
 
 <hr />
 
-<p-selectButton [options]="allServer" [(ngModel)]="currentServer" (onChange)="dt.filter(currentServer&&currentServer.id||null,'sid','equals')"></p-selectButton>
+<p-selectButton [options]="allServer" [(ngModel)]="currentServer" (onChange)="serverChange()" #psb></p-selectButton>
 
 <hr />
 
-<p-dataTable [value]="profiles" selectionMode="single" [(selection)]="selectedProfile" (onRowSelect)="onRowSelectProfile($event)" [sortMode]="multiple" [resizableColumns]="true" [paginator]="true" rows="15" [responsive]="true" #dt>
+<p-dataTable [value]="profiles" selectionMode="single" [(selection)]="selectedProfile" (onRowSelect)="onRowSelectProfile($event)" [sortMode]="multiple" [resizableColumns]="true" [paginator]="true" rows="15" [responsive]="true" [globalFilter]="gb" #pdt>
     <p-header>
       Profiles
-      <div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddProfile()" label="Add"></button></div>
+      <div class="ui-helper-clearfix" style="width:100%">
+        <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddProfile()" label="Add" [disabled]="!servers  || servers.length < 1"></button>
+      </div>
+      <input #gb type="text" placeholder="Global search">
     </p-header>
     <p-column field="id" header="ID" sortable="true"></p-column>
     <p-column field="sid" header="SID" sortable="true"></p-column>
@@ -98,11 +111,11 @@
     <p-column field="dPort" header="DPORT" sortable="true"></p-column>
     <p-column field="arg" header="ARG"></p-column>
 </p-dataTable>
-<p-dialog header="Profile Details" [(visible)]="displayProfileDialog" [responsive]="true" showEffect="fade" [modal]="true">
+<p-dialog header="Profile Details" [(visible)]="displayProfileDialog" [responsive]="true" showEffect="fade" [modal]="true" width="350">
     <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="profile">
         <div class="ui-grid-row">
             <div class="ui-grid-col-4"><label for="profile-id">ID</label></div>
-            <div class="ui-grid-col-8"><input pInputText id="profile-id" [(ngModel)]="profile.id" /></div>
+            <div class="ui-grid-col-8"><input pInputText id="profile-id" [(ngModel)]="profile.id" [disabled]="!newProfile"/></div>
         </div>
         <div class="ui-grid-row">
             <div class="ui-grid-col-4"><label for="profile-sid">SID</label></div>

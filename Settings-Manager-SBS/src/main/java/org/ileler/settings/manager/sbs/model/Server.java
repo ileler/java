@@ -1,6 +1,10 @@
 package org.ileler.settings.manager.sbs.model;
 
+import org.springframework.util.StringUtils;
+
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Copyright:   Copyright 2007 - 2017 MPR Tech. Co. Ltd. All Rights Reserved.
@@ -16,11 +20,11 @@ public class Server implements Serializable {
     public Server() {}
 
     public Server(String id, String url, String username, String password, String configuration) {
-        this.id = id;
-        this.url = url;
-        this.username = username;
-        this.password = password;
         this.configuration = configuration;
+        this.password = password;
+        this.username = username;
+        this.id = id;
+        this.setUrl(url);
     }
 
     private String id;
@@ -33,6 +37,11 @@ public class Server implements Serializable {
 
     private String configuration;
 
+    private String spath;
+    private String shome;
+    private String host;
+    private Integer port;
+
     public String getId() {
         return id;
     }
@@ -42,11 +51,20 @@ public class Server implements Serializable {
     }
 
     public String getUrl() {
-        return url;
+        if (url == null && host == null && username == null) return null;
+        return url != null ? url : (url = "scp://" + host + ":" + getPort() + (spath = (shome == null ? ("/home/" + username + "/") : (shome.startsWith("/") ? shome : ("/home/" + username + "/" + shome)))));
     }
 
     public void setUrl(String url) {
+        if (StringUtils.isEmpty(url))   return;
         this.url = url;
+        Matcher matcher = Pattern.compile("(?:scp://)?(\\w+.*?)(?::(\\d+.*?))?(/.*)").matcher(url);
+        int count = matcher.find() ? matcher.groupCount() : -1;
+        this.host = count > 0 ? matcher.group(1) : null;
+        String port = count > 1 ? matcher.group(2) : null;
+        this.spath = count > 2 ? matcher.group(3) : null;
+        if (!StringUtils.isEmpty(port))  this.port = Integer.valueOf(port);
+        if (!StringUtils.isEmpty(spath)) this.shome = spath.replace("/home/" + this.getUsername() + "/", "");
     }
 
     public String getUsername() {
@@ -71,5 +89,33 @@ public class Server implements Serializable {
 
     public void setConfiguration(String configuration) {
         this.configuration = configuration;
+    }
+
+    public void setShome(String shome) {
+        this.shome = shome;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getSpath() {
+        return spath;
+    }
+
+    public String getShome() {
+        return shome;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public Integer getPort() {
+        return (port == null ? (port = 22) : port);
     }
 }

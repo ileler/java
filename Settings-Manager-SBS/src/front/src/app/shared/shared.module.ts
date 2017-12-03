@@ -4,13 +4,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router'
 
-import { InputTextModule, ButtonModule, DataTableModule, DialogModule, SelectButtonModule, DropdownModule, SharedModule as PrimeNGSharedModule } from 'primeng/primeng';
+import { InputTextModule, InputTextareaModule, ButtonModule, DataTableModule, DialogModule, SelectButtonModule, DropdownModule, SharedModule as PrimeNGSharedModule } from 'primeng/primeng';
 
 import { ValidateOnBlurDirective } from './directives';
 
 @NgModule({
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, ButtonModule, DataTableModule, DialogModule, SelectButtonModule, DropdownModule, PrimeNGSharedModule
+    CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, InputTextareaModule, ButtonModule, DataTableModule, DialogModule, SelectButtonModule, DropdownModule, PrimeNGSharedModule
   ],
   declarations: [
     ValidateOnBlurDirective
@@ -19,7 +19,7 @@ import { ValidateOnBlurDirective } from './directives';
   ],
   exports: [
     CommonModule, FormsModule, ReactiveFormsModule, HttpModule, RouterModule,
-    InputTextModule, ButtonModule, DataTableModule, DialogModule, SelectButtonModule, DropdownModule, PrimeNGSharedModule,
+    InputTextModule, InputTextareaModule, ButtonModule, DataTableModule, DialogModule, SelectButtonModule, DropdownModule, PrimeNGSharedModule,
 	  ValidateOnBlurDirective
   ]
 })
