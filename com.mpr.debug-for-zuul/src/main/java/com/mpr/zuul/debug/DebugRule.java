@@ -200,19 +200,11 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
                     }
                 }
             }
-<<<<<<< HEAD
             if ((StringUtils.isEmpty(dhost) && server == null) || (!StringUtils.isEmpty(dhost) && !force)) {
                 server = super.choose(lb, key);
             }
 
             if (server != null && server.isAlive() && (server.isReadyToServe())) {
-=======
-            if (server == null && !force) {
-                server = super.choose(lb, key);
-            }
-
-            if (server.isAlive() && (server.isReadyToServe())) {
->>>>>>> ad67456c1213391fbf32a96ff7c23ab314635c8d
                 return (server);
             }
 
