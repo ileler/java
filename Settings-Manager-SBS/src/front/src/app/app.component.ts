@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Env } from 'app/domain/env';
 import { Profile } from 'app/domain/profile';
 import { Server } from 'app/domain/server';
+import { SecService } from 'app/services/sec.service';
 import { EnvService } from 'app/services/env.service';
 import { ProfileService } from 'app/services/profile.service';
 import { ServerService } from 'app/services/server.service';
@@ -10,9 +11,21 @@ import { ServerService } from 'app/services/server.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [EnvService, ProfileService, ServerService]
+  providers: [SecService, EnvService, ProfileService, ServerService]
 })
 export class AppComponent {
+
+    isLogin: boolean;
+
+    username: string;
+
+    login: any = {};
+
+    newUser: any = {};
+
+    displayLoginDialog: boolean;
+
+    displayAddUserDialog: boolean;
 
     @ViewChild("pdt") pdt: any;
 
@@ -54,10 +67,95 @@ export class AppComponent {
 
     servers: Server[];
 
-    constructor(private envService: EnvService, private profileService: ProfileService, private serverService: ServerService) { }
+    constructor(private secService: SecService, private envService: EnvService, private profileService: ProfileService, private serverService: ServerService) { }
 
     ngOnInit() {
         this.load();
+        this.secService.isLogin().then(
+          ((respObj) => {
+            if (respObj.success()) {
+              //login success
+              this.isLogin = true;
+              this.username = respObj.data;
+            } else {
+              console.log(respObj);
+            }
+          }).bind(this),
+          (error) => {
+            console.log(error);
+          }
+        );
+    }
+
+    showDialogToAddUser() {
+        this.displayAddUserDialog = true;
+        this.newUser = {};
+    }
+
+    addUser() {
+        this.secService.add(this.newUser).then(
+          ((respObj) => {
+            alert('add success');
+          }).bind(this),
+          (error) => {
+            alert('add failed.');
+          }
+        );
+        this.displayAddUserDialog = false;
+    }
+
+    showDialogToLogin() {
+        this.displayLoginDialog = true;
+        this.login = {};
+    }
+
+    modify() {
+      this.secService.modify(this.login).then(
+        ((respObj) => {
+          if (respObj.success()) {
+            //login success
+            this.isLogin = true;
+            this.username = respObj.data;
+            this.displayLoginDialog = false;
+          } else {
+            alert('modify failed.');
+          }
+        }).bind(this),
+        (error) => {
+          alert('modify failed.');
+        }
+      );
+    }
+
+    toLogin() {
+      this.secService.login(this.login).then(
+        ((respObj) => {
+          if (respObj.success()) {
+            //login success
+            this.isLogin = true;
+            this.username = respObj.data;
+            this.displayLoginDialog = false;
+            this.load();
+          } else {
+            alert('login failed, username or password invalid.');
+          }
+        }).bind(this),
+        (error) => {
+          alert('login failed, username or password invalid.');
+        }
+      );
+    }
+
+    toLogout() {
+      this.isLogin = false;
+      this.username = null;
+      this.secService.logout().then(
+        ((respObj) => {
+          this.load();
+        }).bind(this),
+        (error) => {
+        }
+      );
     }
 
     load() {

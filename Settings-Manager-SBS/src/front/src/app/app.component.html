@@ -1,7 +1,50 @@
+<div class="ui-helper-clearfix" style="width: 100%">
+  <button *ngIf="!isLogin" class="ui-button-secondary" type="button" pButton style="margin-bottom: 10px; float: right" (click)="showDialogToLogin()" label="Login"></button>
+  <button *ngIf="isLogin" class="ui-button-danger" type="button" pButton style="margin-bottom: 10px; float: right" (click)="toLogout()" label="Logout"></button>
+  <button *ngIf="isLogin && username === 'super'" class="ui-button-info" type="button" pButton style="margin-bottom: 10px; float: right" (click)="showDialogToAddUser();" label="Add"></button>
+  <button *ngIf="isLogin" class="ui-button-success" type="button" pButton style="margin-bottom: 10px; float: right" (click)="showDialogToLogin(); login.username = username;" [label]="username"></button>
+</div>
+<p-dialog header="{{username ? 'User' : 'Login'}} Details" [(visible)]="displayLoginDialog" [responsive]="true" showEffect="fade" [modal]="true">
+  <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="login">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4"><label for="username">USERNAME</label></div>
+      <div class="ui-grid-col-8"><input pInputText id="username" [(ngModel)]="login.username" [disabled]="username"/></div>
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4"><label for="password">PASSWORD</label></div>
+      <div class="ui-grid-col-8"><input type="password" pInputText id="password" [(ngModel)]="login.password" /></div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="displayLoginDialog = false;" label="Cancel"></button>
+      <button type="button" pButton icon="fa-check" (click)="username ? modify() : toLogin()" label="Enter"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog header="User Details" [(visible)]="displayAddUserDialog" [responsive]="true" showEffect="fade" [modal]="true">
+  <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="newUser">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4"><label for="newUser.username">USERNAME</label></div>
+      <div class="ui-grid-col-8"><input pInputText id="newUser.username" [(ngModel)]="newUser.username"/></div>
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4"><label for="newUser.password">PASSWORD</label></div>
+      <div class="ui-grid-col-8"><input type="password" pInputText id="newUser.password" [(ngModel)]="newUser.password" /></div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="displayAddUserDialog = false;" label="Cancel"></button>
+      <button type="button" pButton icon="fa-check" (click)="addUser()" label="Enter"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
 <p-dataTable [value]="envs" selectionMode="single" [(selection)]="selectedEnv" (onRowSelect)="onRowSelectEnv($event)" [resizableColumns]="true" [responsive]="true">
   <p-header>
     Envs
-    <div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddEnv()" label="Add"></button></div>
+    <div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddEnv()" label="Add" [disabled]="!isLogin"></button></div>
   </p-header>
   <p-column field="name" header="NAME"></p-column>
   <p-column field="path" header="PATH"></p-column>
@@ -24,8 +67,8 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
-      <button type="button" pButton icon="fa-close" (click)="deleteEnv()" label="Delete"></button>
-      <button type="button" pButton icon="fa-check" (click)="saveEnv()" label="Save"></button>
+      <button type="button" pButton icon="fa-close" (click)="deleteEnv()" label="Delete" [disabled]="!isLogin"></button>
+      <button type="button" pButton icon="fa-check" (click)="saveEnv()" label="Save" [disabled]="!isLogin"></button>
     </div>
   </p-footer>
 </p-dialog>
@@ -36,11 +79,11 @@
 
 <hr />
 
-<p-dataTable [value]="servers" selectionMode="single" [(selection)]="selectedServer" (onRowSelect)="onRowSelectServer($event)" [resizableColumns]="true" [responsive]="true">
+<p-dataTable [value]="servers" selectionMode="single" [(selection)]="selectedServer" (onRowSelect)="onRowSelectServer($event)" [responsive]="true">
   <p-header>
     Servers
     <div class="ui-helper-clearfix" style="width:100%">
-      <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddServer()" label="Add" [disabled]="!envs  || envs.length < 1"></button>
+      <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddServer()" label="Add" [disabled]="!isLogin || (!envs  || envs.length < 1)"></button>
     </div>
   </p-header>
   <p-column field="id" header="ID"></p-column>
@@ -48,7 +91,7 @@
   <p-column field="port" header="PORT"></p-column>
   <p-column field="shome" header="SHOME"></p-column>
   <p-column field="username" header="USERNAME"></p-column>
-  <p-column field="password" header="PASSWORD"></p-column>
+  <p-column field="password" header="PASSWORD" [hidden]="!isLogin"></p-column>
   <!--<p-column field="configuration" header="CONFIGURATION"></p-column>-->
 </p-dataTable>
 <p-dialog header="Server Details" [(visible)]="displayServerDialog" [responsive]="true" showEffect="fade" [modal]="true">
@@ -73,7 +116,7 @@
       <div class="ui-grid-col-4"><label for="server-username">USERNAME</label></div>
       <div class="ui-grid-col-8"><input pInputText id="server-username" [(ngModel)]="server.username" /></div>
     </div>
-    <div class="ui-grid-row">
+    <div class="ui-grid-row" *ngIf="isLogin">
       <div class="ui-grid-col-4"><label for="server-password">PASSWORD</label></div>
       <div class="ui-grid-col-8"><input pInputText id="server-password" [(ngModel)]="server.password" /></div>
     </div>
@@ -84,8 +127,8 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
-      <button type="button" pButton icon="fa-close" (click)="deleteServer()" label="Delete"></button>
-      <button type="button" pButton icon="fa-check" (click)="saveServer()" label="Save"></button>
+      <button type="button" pButton icon="fa-close" (click)="deleteServer()" label="Delete" [disabled]="!isLogin"></button>
+      <button type="button" pButton icon="fa-check" (click)="saveServer()" label="Save" [disabled]="!isLogin"></button>
     </div>
   </p-footer>
 </p-dialog>
@@ -100,7 +143,7 @@
     <p-header>
       Profiles
       <div class="ui-helper-clearfix" style="width:100%">
-        <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddProfile()" label="Add" [disabled]="!servers  || servers.length < 1"></button>
+        <button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAddProfile()" label="Add" [disabled]="!isLogin || (!servers  || servers.length < 1)"></button>
       </div>
       <input #gb type="text" placeholder="Global search">
     </p-header>
@@ -141,8 +184,8 @@
     </div>
     <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
-            <button type="button" pButton icon="fa-close" (click)="deleteProfile()" label="Delete"></button>
-            <button type="button" pButton icon="fa-check" (click)="saveProfile()" label="Save"></button>
+            <button type="button" pButton icon="fa-close" (click)="deleteProfile()" label="Delete" [disabled]="!isLogin"></button>
+            <button type="button" pButton icon="fa-check" (click)="saveProfile()" label="Save" [disabled]="!isLogin"></button>
         </div>
     </p-footer>
 </p-dialog>

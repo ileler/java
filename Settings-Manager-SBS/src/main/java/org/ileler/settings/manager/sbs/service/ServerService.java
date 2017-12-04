@@ -18,7 +18,7 @@ public interface ServerService {
 
     RespObj mod(String envName, Server server);
 
-    RespObj get(String envName);
+    RespObj get(String envName, boolean hasPwd);
 
     RespObj valid(String envName, String id);
 

@@ -7,6 +7,8 @@ import org.ileler.settings.manager.sbs.service.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Copyright:   Copyright 2007 - 2017 MPR Tech. Co. Ltd. All Rights Reserved.
  * Date:        2017年11月25日 上午15:28
@@ -36,8 +38,14 @@ public class ServerServiceImpl implements ServerService {
     }
 
     @Override
-    public RespObj get(String envName) {
-        return new RespObj(serverDAO.get(envName));
+    public RespObj get(String envName, boolean hasPwd) {
+        List<Server> servers = serverDAO.get(envName);
+        if (!hasPwd && servers != null) {
+            for (Server server : servers) {
+                server.setPassword("******");
+            }
+        }
+        return new RespObj(servers);
     }
 
     @Override

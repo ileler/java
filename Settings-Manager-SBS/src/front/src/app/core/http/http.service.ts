@@ -95,7 +95,7 @@ export class HttpService implements IHttpService {
 
   private context = '';
   private headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
-  private options = new RequestOptions({ headers: this.headers });
+  private options = new RequestOptions({ headers: this.headers, withCredentials: true });
 
   constructor(@Optional() config: HttpServiceConfig, private http: Http) {
     if (config) {

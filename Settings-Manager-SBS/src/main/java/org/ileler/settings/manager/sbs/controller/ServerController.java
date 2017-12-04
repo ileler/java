@@ -4,11 +4,14 @@ import org.ileler.settings.manager.sbs.model.RespObj;
 import org.ileler.settings.manager.sbs.model.Server;
 import org.ileler.settings.manager.sbs.service.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/server")
@@ -37,8 +40,9 @@ public class ServerController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public RespObj get(String env) {
-        return serverService.get(env);
+    public RespObj get(String env, HttpSession session) {
+        Object user = session.getAttribute("user");
+        return serverService.get(env, !StringUtils.isEmpty(user));
     }
 
     @RequestMapping(value = "/valid", method = RequestMethod.GET)

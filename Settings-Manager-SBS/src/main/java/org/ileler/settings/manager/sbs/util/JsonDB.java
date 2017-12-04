@@ -19,8 +19,6 @@ import java.util.List;
  */
 public class JsonDB<T> {
 
-    private static final String FILE_NAME = "env";
-
     private String name;
 
     private List<T> data;
@@ -60,7 +58,7 @@ public class JsonDB<T> {
 
     private void save() {
         try {
-            ObjectOutputStream objectOutput = new ObjectOutputStream(new FileOutputStream(FILE_NAME));
+            ObjectOutputStream objectOutput = new ObjectOutputStream(new FileOutputStream(this.name));
             objectOutput.writeObject(data);
             objectOutput.close();
         } catch (Exception e) {
@@ -70,7 +68,7 @@ public class JsonDB<T> {
 
     private void load() {
         try {
-            File file = new File(FILE_NAME);
+            File file = new File(this.name);
             if (!file.exists()) return;
             ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
             Object object = objectInputStream.readObject();
