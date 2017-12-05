@@ -93,6 +93,14 @@
   <p-column field="username" header="USERNAME"></p-column>
   <p-column field="password" header="PASSWORD" [hidden]="!isLogin"></p-column>
   <!--<p-column field="configuration" header="CONFIGURATION"></p-column>-->
+  <p-column header="STATUS">
+    <ng-template let-obj="rowData" let-i="rowIndex" pTemplate="body">
+      <button *ngIf="obj.connectMessage" type="button" pButton (click)="showServerMsg(obj)" label="error msg" class="ui-button-danger"></button>
+      <button *ngIf="!obj.connectMessage" type="button" pButton [label]="obj.connectMessage === undefined ? 'checking' : 'ok'" class="ui-button-success"></button>
+      <!--<button *ngIf="!obj.connectMessage" type="button" pButton (click)="showServerLoginLogs(obj)" label="login logs" class="ui-button-info"></button>-->
+      <!--<button *ngIf="!obj.connectMessage" type="button" pButton (click)="showServerOperLogs(obj)" label="oper logs" class="ui-button-info"></button>-->
+    </ng-template>
+  </p-column>
 </p-dataTable>
 <p-dialog header="Server Details" [(visible)]="displayServerDialog" [responsive]="true" showEffect="fade" [modal]="true">
   <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="server">

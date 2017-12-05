@@ -16,6 +16,18 @@ export class ServerService {
     private httpService: HttpService
   ) {}
 
+  public valid(env: string, id: string): PromiseExt<RespObjModel> {
+    return this.httpService.get(this.env + "/valid", null, { env: env, id: id });
+  }
+
+  public operLogs(env: string, id: string): PromiseExt<RespObjModel> {
+    return this.httpService.get(this.env + "/oper-logs", null, { env: env, id: id });
+  }
+
+  public loginLogs(env: string, id: string): PromiseExt<RespObjModel> {
+    return this.httpService.get(this.env + "/login-logs", null, { env: env, id: id });
+  }
+
   public get(env: string): PromiseExt<RespObjModel> {
     return this.httpService.get(this.env, null, { env: env });
   }

@@ -6,4 +6,5 @@ export interface Server {
     username?;
     password?;
     configuration?;
+    connectMessage?;
 }

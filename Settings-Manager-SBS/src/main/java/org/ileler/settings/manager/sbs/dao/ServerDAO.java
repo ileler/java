@@ -1,6 +1,7 @@
 package org.ileler.settings.manager.sbs.dao;
 
 import org.ileler.settings.manager.sbs.model.Server;
+import org.ileler.settings.manager.sbs.model.Streams;
 
 import java.util.List;
 
@@ -24,5 +25,9 @@ public interface ServerDAO {
     Server get(String envNmae, String id);
 
     String valid(String envNmae, String id);
+
+    Streams operLogs(String envNmae, String id);
+
+    Streams loginLogs(String envNmae, String id);
 
 }

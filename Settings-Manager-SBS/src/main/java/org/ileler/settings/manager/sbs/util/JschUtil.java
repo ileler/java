@@ -7,9 +7,13 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 import org.ileler.settings.manager.sbs.model.Server;
+import org.ileler.settings.manager.sbs.model.Streams;
 import org.springframework.util.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
@@ -61,7 +65,7 @@ public class JschUtil {
     public static void main(String[] args) {
         System.out.println(connect(new Server("test", "scp://172.16.2.21:22/home/mpr/ms", "mpr", "Mprwebsite2008", "")));
         System.out.println("------------------------------------------------------------------------------------------------------");
-        System.out.println(exec(new Server("test","scp://172.16.2.21:8585/home/mpr/ms", "mpr", "Mprwebsite2007", ""), "ls -l"));
+        System.out.println(exec(new Server("test", "scp://172.16.2.21:8585/home/mpr/ms", "mpr", "Mprwebsite2007", ""), "ls -l"));
     }
 
     private static Session openConnectionInternal(Server server) throws JSchException {
@@ -69,11 +73,11 @@ public class JschUtil {
         String password = server == null ? null : server.getPassword();
         String host = server == null ? null : server.getHost();
         Integer port = server == null ? null : server.getPort();
-        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(host))  return null;
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(host)) return null;
 
         JSch jsch = new JSch();
         Properties config = new Properties();
-        config.setProperty( "StrictHostKeyChecking", "no" );
+        config.setProperty("StrictHostKeyChecking", "no");
         Session session = jsch.getSession(username, host, port == null ? 22 : port);
         session.setConfig(config);
         session.setPassword(password);
@@ -136,7 +140,6 @@ public class JschUtil {
                     int i = in.read(tmp, 0, 1024);
                     if (i < 0)
                         break;
-                    System.out.print(new String(tmp, 0, i));
                 }
                 if (channel.isClosed()) {
                     if (in.available() > 0)
@@ -144,10 +147,51 @@ public class JschUtil {
                     return channel.getExitStatus();
                 }
             }
-        } catch (Exception e){
-            System.out.println(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return -1;
+    }
+
+    public static Streams executeCommand(Server server, String command) {
+        ChannelExec channel = null;
+        BufferedReader stdoutReader = null;
+        BufferedReader stderrReader = null;
+        Streams streams = null;
+        try {
+            Session session = openConnectionInternal(server);
+
+            channel = (ChannelExec) session.openChannel("exec");
+
+            channel.setCommand(command + "\n");
+
+            stdoutReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
+            stderrReader = new BufferedReader(new InputStreamReader(channel.getErrStream()));
+
+            channel.connect();
+
+            streams = CommandExecutorStreamProcessor.processStreams(stderrReader, stdoutReader);
+
+            stdoutReader.close();
+            stdoutReader = null;
+
+            stderrReader.close();
+            stderrReader = null;
+
+            streams.setExitCode(channel.getExitStatus());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSchException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtil.close(stdoutReader);
+            IOUtil.close(stderrReader);
+            if (channel != null) {
+                channel.disconnect();
+            }
+        }
+        return streams;
     }
 
 }

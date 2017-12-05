@@ -6,6 +6,7 @@ import org.ileler.settings.manager.sbs.model.Server;
 import org.ileler.settings.manager.sbs.service.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -50,7 +51,19 @@ public class ServerServiceImpl implements ServerService {
 
     @Override
     public RespObj valid(String envName, String id) {
-        return new RespObj(serverDAO.valid(envName, id));
+        String valid = serverDAO.valid(envName, id);
+        if (!StringUtils.isEmpty(valid) && "success".equals(valid)) return new RespObj(valid);
+        return new RespObj("99999999", valid);
+    }
+
+    @Override
+    public RespObj operLogs(String envName, String id) {
+        return new RespObj(serverDAO.operLogs(envName, id));
+    }
+
+    @Override
+    public RespObj loginLogs(String envName, String id) {
+        return new RespObj(serverDAO.loginLogs(envName, id));
     }
 
 }

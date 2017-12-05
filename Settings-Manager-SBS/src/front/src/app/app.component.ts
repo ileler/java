@@ -73,13 +73,9 @@ export class AppComponent {
         this.load();
         this.secService.isLogin().then(
           ((respObj) => {
-            if (respObj.success()) {
-              //login success
-              this.isLogin = true;
-              this.username = respObj.data;
-            } else {
-              console.log(respObj);
-            }
+            //login success
+            this.isLogin = true;
+            this.username = respObj.data;
           }).bind(this),
           (error) => {
             console.log(error);
@@ -112,14 +108,10 @@ export class AppComponent {
     modify() {
       this.secService.modify(this.login).then(
         ((respObj) => {
-          if (respObj.success()) {
-            //login success
-            this.isLogin = true;
-            this.username = respObj.data;
-            this.displayLoginDialog = false;
-          } else {
-            alert('modify failed.');
-          }
+          //login success
+          this.isLogin = true;
+          this.username = respObj.data;
+          this.displayLoginDialog = false;
         }).bind(this),
         (error) => {
           alert('modify failed.');
@@ -130,15 +122,11 @@ export class AppComponent {
     toLogin() {
       this.secService.login(this.login).then(
         ((respObj) => {
-          if (respObj.success()) {
-            //login success
-            this.isLogin = true;
-            this.username = respObj.data;
-            this.displayLoginDialog = false;
-            this.load();
-          } else {
-            alert('login failed, username or password invalid.');
-          }
+          //login success
+          this.isLogin = true;
+          this.username = respObj.data;
+          this.displayLoginDialog = false;
+          this.load();
         }).bind(this),
         (error) => {
           alert('login failed, username or password invalid.');
@@ -175,27 +163,61 @@ export class AppComponent {
         );
     }
 
+    showServerMsg(server) {
+      server.connectMessage && alert(server.connectMessage);
+    }
+
+    showServerLoginLogs(server) {
+      this.serverService.loginLogs(this.currentEnv.name, server.id).then(
+        (respObj) => {
+          alert(respObj.getData());
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+
+    showServerOperLogs(server) {
+      this.serverService.operLogs(this.currentEnv.name, server.id).then(
+        (respObj) => {
+          alert(respObj.getData());
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+
     changeCurrentEnv() {
       this.allServer = (!this.envs || this.envs.length < 1) ? [] : [{label:'ALL', value:{id: null}}];
       if (this.currentEnv) {
         this.serverService.get(this.currentEnv.name).then(
-          (respObj) => {
+          ((respObj) => {
             this.servers = respObj.getData([]);
             this.servers.forEach((server) => {
               this.allServer.push({label:server.id, value:server});
+              this.serverService.valid(this.currentEnv.name, server.id).then(
+                (respObj) => {
+                  server.connectMessage = null;
+                },
+                (error) => {
+                  server.connectMessage = error.mesg || 'failed';
+                }
+              );
             });
             this.currentServer = this.allServer.length > 0 ? this.allServer[0].value : null;
-          },
-          (eroor) => {
-            console.log(eroor);
+          }).bind(this),
+          (error) => {
+            console.log(error);
           }
         );
         this.profileService.get(this.currentEnv.name).then(
           (respObj) => {
             this.profiles = respObj.getData([]);
           },
-          (eroor) => {
-            console.log(eroor);
+          (error) => {
+            console.log(error);
           }
         );
       }
@@ -207,8 +229,8 @@ export class AppComponent {
       //     (respObj) => {
       //       this.profiles = respObj.getData([]);
       //     },
-      //     (eroor) => {
-      //       console.log(eroor);
+      //     (error) => {
+      //       console.log(error);
       //     }
       //   );
       // }
@@ -221,6 +243,10 @@ export class AppComponent {
     }
 
     saveEnv() {
+        if (!this.env.name || !this.env.path) {
+          alert('args invalid.');
+          return;
+        }
         let envs = [...this.envs];
         if(this.newEnv) {
             for(let i = 0, j = envs.length; i < j; i++) {
@@ -301,6 +327,10 @@ export class AppComponent {
     }
 
     saveProfile() {
+        if (!this.profile.id || !this.profile.sid || !this.profile.port) {
+          alert('args invalid.');
+          return;
+        }
         let profiles = [...this.profiles];
         let _profile = this.cloneProfile(this.profile);
         _profile.sid = this.profile.sid && this.profile.sid.id || this.servers[0].id;
@@ -382,6 +412,10 @@ export class AppComponent {
     }
 
     saveServer() {
+        if (!this.server.id || !this.server.host || !this.server.username || !this.server.password) {
+          alert('args invalid.');
+          return;
+        }
         let servers = [...this.servers];
         delete this.server['url'];
         if(this.newServer) {
@@ -394,11 +428,18 @@ export class AppComponent {
             this.serverService.add(this.currentEnv.name, this.server).then(
               ((respObj) => {
                 console.log(respObj);
-                if (respObj.success()) {
-                  servers.push(respObj.getData());
-                  this.allServer.push({label:respObj.getData().id, value:respObj.getData()});
-                  this.servers = servers;
-                }
+                let server = respObj.getData();
+                servers.push(server);
+                this.serverService.valid(this.currentEnv.name, server.id).then(
+                  (respObj) => {
+                    server.connectMessage = null;
+                  },
+                  (error) => {
+                    server.connectMessage = error.mesg || 'failed';
+                  }
+                );
+                this.allServer.push({label:server.id, value:server});
+                this.servers = servers;
               }).bind(this),
               (error) => {
                 console.log(error);
@@ -407,11 +448,18 @@ export class AppComponent {
         } else {
             this.serverService.mod(this.currentEnv.name, this.server).then(
               ((respObj) => {
-                  console.log(respObj);
-                  if (respObj.success()) {
-                    servers[this.findSelectedServerIndex()] = respObj.getData();
-                    this.servers = servers;
+                console.log(respObj);
+                let server = respObj.getData();
+                this.serverService.valid(this.currentEnv.name, server.id).then(
+                  (respObj) => {
+                    server.connectMessage = null;
+                  },
+                  (error) => {
+                    server.connectMessage = error.mesg || 'failed';
                   }
+                );
+                servers[this.findSelectedServerIndex()] = server;
+                this.servers = servers;
               }).bind(this),
               (error) => {
                 console.log(error);
@@ -472,5 +520,5 @@ export class PrimeProfile implements Profile {
 }
 
 export class PrimeServer implements Server {
-  constructor(public id?, public host?, public port?, public shome?, public username?, public password?, public configuration?) {}
+  constructor(public id?, public host?, public port?, public shome?, public username?, public password?, public configuration?, public connectMessage?) {}
 }

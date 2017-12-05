@@ -4,6 +4,7 @@ import org.ileler.settings.manager.sbs.dao.EnvDAO;
 import org.ileler.settings.manager.sbs.dao.ServerDAO;
 import org.ileler.settings.manager.sbs.model.Env;
 import org.ileler.settings.manager.sbs.model.Server;
+import org.ileler.settings.manager.sbs.model.Streams;
 import org.ileler.settings.manager.sbs.util.JschUtil;
 import org.ileler.settings.manager.sbs.util.SettingsDB;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,20 @@ public class ServerDAOImpl implements ServerDAO {
         Server server = get(envNmae, id);
         if (server == null)     return null;
         return JschUtil.connect(server);
+    }
+
+    @Override
+    public Streams operLogs(String envNmae, String id) {
+        Server server = get(envNmae, id);
+        if (server == null)     return null;
+        return JschUtil.executeCommand(server, "cd /var/log && cat syslog");
+    }
+
+    @Override
+    public Streams loginLogs(String envNmae, String id) {
+        Server server = get(envNmae, id);
+        if (server == null)     return null;
+        return JschUtil.executeCommand(server, "last -50");
     }
 
 }

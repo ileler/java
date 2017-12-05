@@ -22,20 +22,23 @@ public class ServerController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public RespObj add(String env, @RequestBody Server server) {
-        return serverService.add(env, server);
+    public RespObj add(String env, @RequestBody Server server, HttpSession session) {
+        Object user = session.getAttribute("user");
+        return StringUtils.isEmpty(user) ? new RespObj("401", "Unauthorized") : serverService.add(env, server);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
     @ResponseBody
-    public RespObj del(String env, String id) {
-        return serverService.del(env, id);
+    public RespObj del(String env, String id, HttpSession session) {
+        Object user = session.getAttribute("user");
+        return StringUtils.isEmpty(user) ? new RespObj("401", "Unauthorized") : serverService.del(env, id);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseBody
-    public RespObj mod(String env, @RequestBody Server server) {
-        return serverService.mod(env, server);
+    public RespObj mod(String env, @RequestBody Server server, HttpSession session) {
+        Object user = session.getAttribute("user");
+        return StringUtils.isEmpty(user) ? new RespObj("401", "Unauthorized") : serverService.mod(env, server);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -49,6 +52,18 @@ public class ServerController {
     @ResponseBody
     public RespObj get(String env, String id) {
         return serverService.valid(env, id);
+    }
+
+    @RequestMapping(value = "/login-logs", method = RequestMethod.GET)
+    @ResponseBody
+    public RespObj loginLogs(String env, String id) {
+        return serverService.loginLogs(env, id);
+    }
+
+    @RequestMapping(value = "/oper-logs", method = RequestMethod.GET)
+    @ResponseBody
+    public RespObj operLogs(String env, String id) {
+        return serverService.operLogs(env, id);
     }
 
 }

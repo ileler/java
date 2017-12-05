@@ -22,4 +22,8 @@ public interface ServerService {
 
     RespObj valid(String envName, String id);
 
+    RespObj operLogs(String envName, String id);
+
+    RespObj loginLogs(String envName, String id);
+
 }
