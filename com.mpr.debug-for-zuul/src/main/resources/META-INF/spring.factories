@@ -1,0 +1,5 @@
+org.springframework.boot.SpringApplicationRunListener=\
+  com.mpr.zuul.debug.DebugRule.Enable
+
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.mpr.zuul.debug.Configuration
