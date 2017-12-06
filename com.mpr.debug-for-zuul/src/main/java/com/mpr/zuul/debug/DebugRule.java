@@ -63,7 +63,7 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
             if (map == null)    return null;
             Map<String, Object> config = new Hashtable<>(0);
             Iterator<String> iterator = map.keySet().iterator();
-            Pattern compile = Pattern.compile("zuul\\.routes\\..*\\.serviceId");
+            Pattern compile = Pattern.compile("zuul\\.routes\\..*\\.service-?[iI]d");
             while (iterator.hasNext()) {
                 String next = iterator.next();
                 if (compile.matcher(next).matches()) {
@@ -189,9 +189,19 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
                 }
             }
 
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("dhost:[" + (dhost == null ? "null" : dhost.toString()) + "]");
+            }
+
             if (!StringUtils.isEmpty(dhost)) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(">>>>>>>>>>");
+                }
                 for (Server _server : allServers) {
                     if (_server == null) continue;
+                    if (LOGGER.isInfoEnabled()) {
+                        LOGGER.info(_server.getHost());
+                    }
                     if (dhost.contains(_server.getHost())) {
                         _server.setReadyToServe(true);
                         _server.setAlive(true);
@@ -199,12 +209,18 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
                         break;
                     }
                 }
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("<<<<<<<<<<");
+                }
             }
             if ((StringUtils.isEmpty(dhost) && server == null) || (!StringUtils.isEmpty(dhost) && !force)) {
                 server = super.choose(lb, key);
             }
 
             if (server != null && server.isAlive() && (server.isReadyToServe())) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("<" + server.getHost() + ">");
+                }
                 return (server);
             }
 
