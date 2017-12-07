@@ -142,6 +142,13 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
             LOGGER.error(e.getMessage(), e);
         }
 
+        String info = "";
+        if (LOGGER.isInfoEnabled()) {
+            info += "\ndebug:[" + (debug == null ? "null" : debug.toString()) + "]\n"
+                    + "force:[" + (force == null ? "null" : force.toString()) + "]\n"
+                    + "mapping:[" + (mapping == null ? "null" : mapping.toString()) + "]\n"
+                    + "exclude:[" + (exclude == null ? "null" : exclude.toString()) + "]\n";
+        }
         if (debug == null || !debug)     return super.choose(key);
 
         if (lb == null) {
@@ -151,7 +158,10 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
 
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx == null ? null : ctx.getRequest();
-        if (request == null)    return null;
+
+        if (LOGGER.isInfoEnabled() && request != null) {
+            info += "request:" + request.getRequestURL().toString() + "\n";
+        }
 
         Server server = null;
         int count = 0;
@@ -166,8 +176,8 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
                 return null;
             }
 
-            String dhost = request.getParameter("_d_s_h_");
-            if (StringUtils.isEmpty(dhost) && !StringUtils.isEmpty(mapping)) {
+            String dhost = request == null ? null : request.getParameter("_d_s_h_");
+            if (request != null && StringUtils.isEmpty(dhost) && !StringUtils.isEmpty(mapping)) {
                 String remoteHost = request.getRemoteHost();
                 String[] split = mapping.split(";");
                 for (String str : split) {
@@ -189,18 +199,19 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
                 }
             }
 
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("dhost:[" + (dhost == null ? "null" : dhost.toString()) + "]");
+            if (LOGGER.isInfoEnabled() && !info.contains("dhost:[")) {
+                info += "dhost:[" + (dhost == null ? "null" : dhost.toString()) + "]\n";
             }
 
             if (!StringUtils.isEmpty(dhost)) {
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info(">>>>>>>>>>");
+                    info += "servers:[";
                 }
-                for (Server _server : allServers) {
+                for (int i = 0, j = allServers.size(); i < j; i++) {
+                    Server _server = allServers.get(i);
                     if (_server == null) continue;
                     if (LOGGER.isInfoEnabled()) {
-                        LOGGER.info(_server.getHost());
+                        info += (i == 0 ? "" : ",") + _server.getHost();
                     }
                     if (dhost.contains(_server.getHost())) {
                         _server.setReadyToServe(true);
@@ -210,7 +221,7 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
                     }
                 }
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("<<<<<<<<<<");
+                    info += "]\n";
                 }
             }
             if ((StringUtils.isEmpty(dhost) && server == null) || (!StringUtils.isEmpty(dhost) && !force)) {
@@ -219,7 +230,7 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
 
             if (server != null && server.isAlive() && (server.isReadyToServe())) {
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("<" + server.getHost() + ">");
+                    LOGGER.info(info + "chosen:" + server.getHost());
                 }
                 return (server);
             }
@@ -227,7 +238,9 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
             // Next.
             server = null;
         }
-
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(info);
+        }
         if (count >= 10) {
             LOGGER.warn("No available alive servers after 10 tries from load balancer: "
                     + lb);
