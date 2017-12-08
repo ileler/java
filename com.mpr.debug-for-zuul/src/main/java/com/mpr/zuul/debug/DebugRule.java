@@ -224,7 +224,7 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
                     info += "]\n";
                 }
             }
-            if ((StringUtils.isEmpty(dhost) && server == null) || (!StringUtils.isEmpty(dhost) && !force)) {
+            if ((StringUtils.isEmpty(dhost) || (!StringUtils.isEmpty(dhost) && !force)) && server == null) {
                 server = super.choose(lb, key);
             }
 
