@@ -96,7 +96,9 @@
   <p-column header="STATUS">
     <ng-template let-obj="rowData" let-i="rowIndex" pTemplate="body">
       <button *ngIf="obj.connectMessage" type="button" pButton (click)="showServerMsg(obj)" label="error msg" class="ui-button-danger"></button>
-      <button *ngIf="!obj.connectMessage" type="button" pButton [label]="obj.connectMessage === undefined ? 'checking' : 'ok'" class="ui-button-success"></button>
+      <button *ngIf="obj.connectMessage === undefined" type="button" pButton label="checking" class="ui-button-success"></button>
+      <button *ngIf="checkServiceNo(obj.id) && obj.connectMessage !== undefined && !obj.connectMessage" type="button" pButton (click)="showServiceDialog(obj.id)" label="ok" class="ui-button-success"></button>
+      <button *ngIf="!checkServiceNo(obj.id) && obj.connectMessage !== undefined && !obj.connectMessage" type="button" pButton (click)="showServiceDialog(obj.id)" label="ok" class="ui-button-warning"></button>
       <!--<button *ngIf="!obj.connectMessage" type="button" pButton (click)="showServerLoginLogs(obj)" label="login logs" class="ui-button-info"></button>-->
       <!--<button *ngIf="!obj.connectMessage" type="button" pButton (click)="showServerOperLogs(obj)" label="oper logs" class="ui-button-info"></button>-->
     </ng-template>
@@ -139,6 +141,26 @@
       <button type="button" pButton icon="fa-check" (click)="saveServer()" label="Save" [disabled]="!isLogin"></button>
     </div>
   </p-footer>
+</p-dialog>
+<p-dialog header="Services Details" [(visible)]="displayServicesDialog" [responsive]="true" showEffect="fade" [modal]="true">
+  <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="services && currentEnv && currentEnv.name && serviceSID">
+    <p-dataTable [value]="services[currentEnv.name + '-' + serviceSID]" [resizableColumns]="true" [responsive]="true">
+      <p-header>
+        Services{{checkServiceNo(serviceSID) ? '' : '[The number of services and instances is inconsistent]'}}
+      </p-header>
+      <p-column field="pid" header="PID" sortable="true" [style]="{'width':'100px'}"></p-column>
+      <p-column field="detail" header="DETAIL" sortable="true">
+        <ng-template let-col let-row="rowData" pTemplate="body">
+          <textarea pInputTextarea autoResize="autoResize" value="{{row[col.field]}}"></textarea>
+        </ng-template>
+      </p-column>
+      <p-column header="OPERATION" [style]="{'width':'100px'}">
+        <ng-template let-obj="rowData" let-i="rowIndex" pTemplate="body">
+          <button type="button" pButton (click)="killService(obj.pid)" label="kill" class="ui-button-danger" [disabled]="!isLogin"></button>
+        </ng-template>
+      </p-column>
+    </p-dataTable>
+  </div>
 </p-dialog>
 
 <hr />

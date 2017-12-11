@@ -57,6 +57,16 @@ public class ServerServiceImpl implements ServerService {
     }
 
     @Override
+    public RespObj services(String envName, String id) {
+        return new RespObj(serverDAO.services(envName, id));
+    }
+
+    @Override
+    public RespObj kill(String envName, String id, Long pid) {
+        return new RespObj(serverDAO.kill(envName, id, pid));
+    }
+
+    @Override
     public RespObj operLogs(String envName, String id) {
         return new RespObj(serverDAO.operLogs(envName, id));
     }

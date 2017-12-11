@@ -14,20 +14,24 @@ import java.util.List;
  */
 public interface ServerDAO {
 
-    Server add(String envNmae, Server server);
+    Server add(String envName, Server server);
 
-    Boolean del(String envNmae, String id);
+    Boolean del(String envName, String id);
 
-    Server mod(String envNmae, Server server);
+    Server mod(String envName, Server server);
 
-    List<Server> get(String envNmae);
+    List<Server> get(String envName);
 
-    Server get(String envNmae, String id);
+    Server get(String envName, String id);
 
-    String valid(String envNmae, String id);
+    String valid(String envName, String id);
 
-    Streams operLogs(String envNmae, String id);
+    Streams services(String envName, String id);
 
-    Streams loginLogs(String envNmae, String id);
+    Streams kill(String envName, String id, Long pid);
+
+    Streams operLogs(String envName, String id);
+
+    Streams loginLogs(String envName, String id);
 
 }

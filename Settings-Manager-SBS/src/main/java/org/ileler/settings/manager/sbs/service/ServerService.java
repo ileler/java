@@ -22,6 +22,10 @@ public interface ServerService {
 
     RespObj valid(String envName, String id);
 
+    RespObj services(String envName, String id);
+
+    RespObj kill(String envName, String id, Long pid);
+
     RespObj operLogs(String envName, String id);
 
     RespObj loginLogs(String envName, String id);

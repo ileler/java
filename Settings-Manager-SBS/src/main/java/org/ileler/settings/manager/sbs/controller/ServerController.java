@@ -50,8 +50,20 @@ public class ServerController {
 
     @RequestMapping(value = "/valid", method = RequestMethod.GET)
     @ResponseBody
-    public RespObj get(String env, String id) {
+    public RespObj valid(String env, String id) {
         return serverService.valid(env, id);
+    }
+
+    @RequestMapping(value = "/services", method = RequestMethod.GET)
+    @ResponseBody
+    public RespObj services(String env, String id) {
+        return serverService.services(env, id);
+    }
+
+    @RequestMapping(value = "/kill", method = RequestMethod.DELETE)
+    @ResponseBody
+    public RespObj kill(String env, String id, Long pid) {
+        return serverService.kill(env, id, pid);
     }
 
     @RequestMapping(value = "/login-logs", method = RequestMethod.GET)

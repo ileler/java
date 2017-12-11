@@ -23,6 +23,12 @@ export class AppComponent {
 
     newUser: any = {};
 
+    services: any = {};
+
+    serviceSID: string;
+
+    displayServicesDialog: boolean;
+
     displayLoginDialog: boolean;
 
     displayAddUserDialog: boolean;
@@ -167,6 +173,52 @@ export class AppComponent {
       server.connectMessage && alert(server.connectMessage);
     }
 
+    showServiceDialog(sid) {
+      this.displayServicesDialog = true;
+      this.serviceSID = sid
+    }
+
+    killService(pid) {
+      this.serverService.kill(this.currentEnv.name, this.serviceSID, pid).then(
+        (respObj) => {
+          this.servers.forEach((server) => {
+            if (server.id === this.serviceSID) {
+              this.loadServices(this.currentEnv.name, server);
+            }
+          });
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+
+    loadServices(env, server) {
+      this.serverService.list(env, server.id).then(
+        (respObj) => {
+          let data = respObj.getData({});
+          if (0 !== data.exitCode) {
+            server.connectMessage = data.err;
+          } else {
+            let skey = env + '-' + server.id;
+            this.services[skey] = [];
+            (data.out || '').split('\n').forEach((service) => {
+              if (!service || !service.trim() || service.indexOf('sun.tools.jps.Jps') != -1) return;
+              this.services[skey].push({pid:service.substring(0, service.indexOf(' ')), detail:service.substring(service.indexOf(' ') + 1)});
+            });
+            server.connectMessage = null;
+          }
+        },
+        (error) => {
+          server.connectMessage = error.mesg || 'failed';
+        }
+      );
+    }
+
+    checkServiceNo(sid) {
+      return ((this.profiles || []).filter((val,i) => val.sid == sid)).length === (this.services[this.currentEnv.name + '-' + sid] || []).length;
+    }
+
     showServerLoginLogs(server) {
       this.serverService.loginLogs(this.currentEnv.name, server.id).then(
         (respObj) => {
@@ -197,14 +249,7 @@ export class AppComponent {
             this.servers = respObj.getData([]);
             this.servers.forEach((server) => {
               this.allServer.push({label:server.id, value:server});
-              this.serverService.valid(this.currentEnv.name, server.id).then(
-                (respObj) => {
-                  server.connectMessage = null;
-                },
-                (error) => {
-                  server.connectMessage = error.mesg || 'failed';
-                }
-              );
+              this.loadServices(this.currentEnv.name, server);
             });
             this.currentServer = this.allServer.length > 0 ? this.allServer[0].value : null;
           }).bind(this),
@@ -430,15 +475,8 @@ export class AppComponent {
                 console.log(respObj);
                 let server = respObj.getData();
                 servers.push(server);
-                this.serverService.valid(this.currentEnv.name, server.id).then(
-                  (respObj) => {
-                    server.connectMessage = null;
-                  },
-                  (error) => {
-                    server.connectMessage = error.mesg || 'failed';
-                  }
-                );
                 this.allServer.push({label:server.id, value:server});
+                this.loadServices(this.currentEnv.name, server);
                 this.servers = servers;
               }).bind(this),
               (error) => {
@@ -450,15 +488,8 @@ export class AppComponent {
               ((respObj) => {
                 console.log(respObj);
                 let server = respObj.getData();
-                this.serverService.valid(this.currentEnv.name, server.id).then(
-                  (respObj) => {
-                    server.connectMessage = null;
-                  },
-                  (error) => {
-                    server.connectMessage = error.mesg || 'failed';
-                  }
-                );
                 servers[this.findSelectedServerIndex()] = server;
+                this.loadServices(this.currentEnv.name, server);
                 this.servers = servers;
               }).bind(this),
               (error) => {

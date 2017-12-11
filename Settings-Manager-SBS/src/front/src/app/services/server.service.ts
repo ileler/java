@@ -16,8 +16,12 @@ export class ServerService {
     private httpService: HttpService
   ) {}
 
-  public valid(env: string, id: string): PromiseExt<RespObjModel> {
-    return this.httpService.get(this.env + "/valid", null, { env: env, id: id });
+  public list(env: string, id: string): PromiseExt<RespObjModel> {
+    return this.httpService.get(this.env + "/services", null, { env: env, id: id });
+  }
+
+  public kill(env: string, id: string, pid: string): PromiseExt<RespObjModel> {
+    return this.httpService.delete(this.env + "/kill", null, { env: env, id: id, pid: pid });
   }
 
   public operLogs(env: string, id: string): PromiseExt<RespObjModel> {
