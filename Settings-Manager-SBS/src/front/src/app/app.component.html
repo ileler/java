@@ -142,13 +142,24 @@
     </div>
   </p-footer>
 </p-dialog>
-<p-dialog header="Services Details" [(visible)]="displayServicesDialog" [responsive]="true" showEffect="fade" [modal]="true">
+<p-dialog header="Services Details{{checkServiceNo(serviceSID) ? '' : '[The number of services and instances is inconsistent]'}}" [(visible)]="displayServicesDialog" [responsive]="true" showEffect="fade" [modal]="true">
   <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="services && currentEnv && currentEnv.name && serviceSID">
+    <p-dataTable [value]="requiredService" [resizableColumns]="true" [responsive]="true">
+      <p-header>
+        Defined Services
+      </p-header>
+      <p-column field="id" header="ID" sortable="true"></p-column>
+      <p-column field="dir" header="DIR" sortable="true"></p-column>
+      <p-column field="port" header="PORT" sortable="true"></p-column>
+      <p-column field="dPort" header="DPORT" sortable="true"></p-column>
+      <p-column field="arg" header="ARG"></p-column>
+    </p-dataTable>
     <p-dataTable [value]="services[currentEnv.name + '-' + serviceSID]" [resizableColumns]="true" [responsive]="true">
       <p-header>
-        Services{{checkServiceNo(serviceSID) ? '' : '[The number of services and instances is inconsistent]'}}
+        Actual Services
       </p-header>
       <p-column field="pid" header="PID" sortable="true" [style]="{'width':'100px'}"></p-column>
+      <p-column field="sid" header="SID" sortable="true" [style]="{'width':'200px'}"></p-column>
       <p-column field="detail" header="DETAIL" sortable="true">
         <ng-template let-col let-row="rowData" pTemplate="body">
           <textarea pInputTextarea autoResize="autoResize" value="{{row[col.field]}}"></textarea>

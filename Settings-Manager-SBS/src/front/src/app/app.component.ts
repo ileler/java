@@ -27,6 +27,8 @@ export class AppComponent {
 
     serviceSID: string;
 
+    requiredService: any[] = [];
+
     displayServicesDialog: boolean;
 
     displayLoginDialog: boolean;
@@ -204,7 +206,10 @@ export class AppComponent {
             this.services[skey] = [];
             (data.out || '').split('\n').forEach((service) => {
               if (!service || !service.trim() || service.indexOf('sun.tools.jps.Jps') != -1) return;
-              this.services[skey].push({pid:service.substring(0, service.indexOf(' ')), detail:service.substring(service.indexOf(' ') + 1)});
+              let pid = service.substring(0, service.indexOf(' '));
+              let detail = service.substring(service.indexOf(' ') + 1);
+              let sid = detail.match('/home/.*/(.*?)\.jar');
+              this.services[skey].push({pid: pid, detail: detail, sid: sid && sid.length > 1 ? sid[1] : null});
             });
             server.connectMessage = null;
           }
@@ -216,7 +221,8 @@ export class AppComponent {
     }
 
     checkServiceNo(sid) {
-      return ((this.profiles || []).filter((val,i) => val.sid == sid)).length === (this.services[this.currentEnv.name + '-' + sid] || []).length;
+      this.requiredService = ((this.profiles || []).filter((val,i) => val.sid == sid));
+      return this.requiredService.length === (this.services[this.currentEnv.name + '-' + sid] || []).length;
     }
 
     showServerLoginLogs(server) {
