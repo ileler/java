@@ -197,6 +197,10 @@
 </p-dataTable>
 <p-dialog header="Profile Details" [(visible)]="displayProfileDialog" [responsive]="true" showEffect="fade" [modal]="true" width="350">
     <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="profile">
+        <div class="ui-grid-row" *ngIf="newProfile">
+          <div class="ui-grid-col-4"><label for="profile-copy">COPY</label></div>
+          <div class="ui-grid-col-8"><p-dropdown id="profile-copy" [options]="profiles" [style]="{'width':'100%'}" placeholder="..." optionLabel="id" (onChange)="copy($event)" [ngModel]="{}"></p-dropdown></div>
+        </div>
         <div class="ui-grid-row">
             <div class="ui-grid-col-4"><label for="profile-id">ID</label></div>
             <div class="ui-grid-col-8"><input pInputText id="profile-id" [(ngModel)]="profile.id" [disabled]="!newProfile"/></div>

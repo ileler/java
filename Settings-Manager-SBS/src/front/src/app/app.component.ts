@@ -546,6 +546,14 @@ export class AppComponent {
     findSelectedServerIndex(): number {
         return this.servers.indexOf(this.selectedServer);
     }
+
+    copy($event) {
+      this.profile.sid = $event.value.sid;
+      this.profile.dir = $event.value.dir;
+      this.profile.port = $event.value.port;
+      this.profile.dPort = $event.value.dPort;
+      this.profile.arg = $event.value.arg;
+    }
 }
 
 export class PrimeEnv implements Env {
