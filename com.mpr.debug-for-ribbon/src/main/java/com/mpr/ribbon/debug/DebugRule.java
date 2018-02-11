@@ -165,11 +165,11 @@ public class DebugRule extends RoundRobinRule implements BeanFactoryAware {
                     if (LOGGER.isDebugEnabled()) {
                         info += (i == 0 ? "" : ",") + _server.getHost();
                     }
-                    if (dfrom.contains(_server.getHost())) {
+                    if (dfrom.contains(_server.getHost()) && server == null) {
                         _server.setReadyToServe(true);
                         _server.setAlive(true);
                         server = _server;
-                        break;
+//                        break;
                     }
                 }
                 if (LOGGER.isDebugEnabled()) {

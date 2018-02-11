@@ -69,9 +69,9 @@ public class Configuration {
     private void reload() {
         if (configurableEnvironment == null)    return;
         configurableEnvironment.getPropertySources().remove("for-lb-config");
-        if (debug != null && debug) {
+//        if (debug != null && debug) {
             configurableEnvironment.getPropertySources().addFirst(new MapPropertySource("for-lb-config", generateConfig(debugServices)));
-        }
+//        }
     }
 
     @Value("${service.lb.debug:#{false}}")
