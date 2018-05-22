@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <localRepository>/home/ubuntu/maven_repo_springboot</localRepository>
+
+    <servers>
+        <server>
+            <id>server1</id>
+            <username>user1</username>
+            <password>pwd1</password>
+            <configuration url="scp://172.16.x.xx:xx/home/user1/xxx">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+        <server>
+            <id>server2</id>
+            <username>user1</username>
+            <password>pwd1</password>
+            <configuration url="scp://172.16.x.xx:xx/home/user1/xxx">
+                <strictHostKeyChecking>no</strictHostKeyChecking>
+            </configuration>
+        </server>
+    </servers>
+
+    <mirrors>
+        <mirror>
+            <id>nexus</id>
+            <name>internal nexus repository</name>
+            <url>http://172.16.x.xx:8081/repository/maven-public/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
+
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <repositories>
+                <repository>
+                    <id>nexus</id>
+                    <name>local private nexus</name>
+                    <url>http://172.16.x.xx:8081/repository/maven-public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>nexus</id>
+                    <url>http://172.16.x.xx:8081/repository/maven-public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+
+        <profile>
+            <id>service1</id>
+            <properties>
+                <service.sid>server1</service.sid>
+                <service.dir>service1</service.dir>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>service2</id>
+            <properties>
+                <service.sid>server2</service.sid>
+                <service.dir>service2</service.dir>
+                <service.port>11000</service.port>
+                <service.dport>11005</service.dport>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>nexus</activeProfile>
+    </activeProfiles>
+
+</settings>
