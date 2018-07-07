@@ -1,0 +1,18 @@
+server:
+  port: 11000
+logging.level.root: error
+logging.level.org.ileler: debug
+zuul:
+#  ignoredServices: '*'
+#  ribbon:
+#    eager-load:
+#      enabled: true
+  routes:
+    s1:
+      path: /s1/**
+      serviceId: org.ileler.service1
+      stripPrefix: true
+    s2:
+      path: /s2/**
+      serviceId: org.ileler.service2
+      stripPrefix: true
