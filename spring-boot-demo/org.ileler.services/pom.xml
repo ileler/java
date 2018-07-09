@@ -17,6 +17,5 @@
         <module>org.ileler.gateway2</module>
         <module>org.ileler.service1</module>
         <module>org.ileler.service2</module>
-        <module>org.ileler.zipkin</module>
   </modules>
 </project>

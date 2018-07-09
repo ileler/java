@@ -3,7 +3,7 @@ package org.ileler.zipkin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.Configuration;
+import zipkin.server.internal.EnableZipkinServer;
 
 /**
  * Date:        2018年07月07日 上午9:40 AM

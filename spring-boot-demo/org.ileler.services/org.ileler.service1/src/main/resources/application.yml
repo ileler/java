@@ -2,3 +2,9 @@ server:
   port: 11001
 logging.level.root: error
 logging.level.org.ileler: debug
+spring:
+  zipkin:
+    base-url: http://localhost:11099
+  sleuth:
+    sampler:
+      percentage: 1.0
