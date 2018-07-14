@@ -1,0 +1,12 @@
+server:
+  port: 10002
+logging.level.root: info
+logging.level.com.cncbox: debug
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

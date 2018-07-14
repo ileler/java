@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: '@project.artifactId@'
+#  cloud:
+#    config:
+#      enabled: true
+#    discovery:
+#      client:
+#        composite-indicator:
+#          enabled: false
+#    zookeeper:
+#      config:
+#        enable: true
+#        root: configuration
+#        format: PROPERTIES
+#      connect-string: ${zk.path}
+#
+#---
+##localhost
+#spring:
+#  profiles: local
+#  cloud:
+#    zookeeper:
+#      discovery:
+#        instanceIpAddress: 172.16.7.118
+##zk.path: 192.168.56.56:2181,192.168.56.56:2182,192.168.56.56:2183
+#---
+##开发环境配置
+#spring:
+#  profiles: dev,default
+#zk.path: 172.16.2.53:2181,172.16.2.53:2182,172.16.2.53:2183
+##gateway.default.redirect: true
+#---
+##测试环境配置
+#spring:
+#  profiles: test
+#zk.path: 172.16.3.63:2181,172.16.3.63:2182,172.16.3.63:2183
+#---
+##高仿环境配置
+#spring:
+#  profiles: pre
+#zk.path: 10.10.50.54:2181,10.10.50.55:2181,10.10.50.56:2181
+#---
+##上线环境配置
+#spring:
+#  profiles: online
+#zk.path: 10.10.10.54:2181,10.10.10.55:2181,10.10.10.56:2181
