@@ -1,5 +1,5 @@
 server:
-  port: 11099
+  port: 10003
 logging.level.root: info
 logging.level.org.ileler: debug
 management.metrics.web.server.auto-time-requests: false

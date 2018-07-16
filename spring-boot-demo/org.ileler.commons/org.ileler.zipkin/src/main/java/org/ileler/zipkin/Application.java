@@ -2,7 +2,6 @@ package org.ileler.zipkin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import zipkin.server.internal.EnableZipkinServer;
 
 /**
@@ -12,7 +11,6 @@ import zipkin.server.internal.EnableZipkinServer;
  * Description: Initialize
  */
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableZipkinServer
 public class Application {
 
