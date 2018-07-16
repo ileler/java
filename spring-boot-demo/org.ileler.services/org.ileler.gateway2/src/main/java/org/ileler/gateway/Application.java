@@ -9,10 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.ileler.gateway.config.GatewayProperties;
 
 /**
- * Date:        2018年06月30日 上午10:38 AM
- * Author:      kerwin612
- * Version:     1.0.0.0
- * Description: Initialize
+ * Author: kerwin612
  */
 @SpringBootApplication
 @EnableDiscoveryClient

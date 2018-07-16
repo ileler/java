@@ -2,11 +2,3 @@ server:
   port: 10002
 logging.level.root: info
 logging.level.org.ileler: debug
-eureka:
-  instance:
-    hostname: localhost
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
-    serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

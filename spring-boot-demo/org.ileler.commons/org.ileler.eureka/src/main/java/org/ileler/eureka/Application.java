@@ -5,11 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 /**
- * Copyright:   Copyright 2007 - 2018 MPR Tech. Co. Ltd. All Rights Reserved.
- * Date:        2018年07月16日 上午8:18 AM
- * Author:      kerwin612
- * Version:     1.0.0.0
- * Description: Initialize
+ * Author: kerwin612
  */
 @SpringBootApplication
 @EnableEurekaServer

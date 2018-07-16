@@ -5,7 +5,7 @@ logging.level.org.ileler: debug
 #logging.level.org.springframework.cloud.sleuth: debug
 spring:
   zipkin:
-    base-url: http://localhost:11099
+    base-url: http://localhost:10003
   sleuth:
     sampler:
       percentage: 1.0

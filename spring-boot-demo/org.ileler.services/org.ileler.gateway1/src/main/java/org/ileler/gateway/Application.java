@@ -8,10 +8,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 /**
- * Date:        2018年06月30日 上午10:38 AM
- * Author:      kerwin612
- * Version:     1.0.0.0
- * Description: Initialize
+ * Author: kerwin612
  */
 @EnableZuulProxy
 @EnableFeignClients
