@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.cncbox.utils.swagger.SwaggerMVCConfiguration,\
+  com.cncbox.utils.mybatis.DataBaseConfig,\
+  com.cncbox.utils.mybatis.ServiceDBConfiguration
