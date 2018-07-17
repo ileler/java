@@ -1,10 +1,10 @@
 server:
   port: 11001
-logging.level.root: error
+logging.level.root: info
 logging.level.org.ileler: debug
+logging.level.org.springframework.cloud.sleuth: debug
 spring:
   zipkin:
-    base-url: http://localhost:11099
-  sleuth:
-    sampler:
-      percentage: 1.0
+    sender.type: web
+    base-url: http://localhost:10003
+  sleuth.sampler.percentage: 1.0

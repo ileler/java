@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.ileler.utils.swagger.SwaggerMVCConfiguration,\
+  org.ileler.utils.mybatis.DataBaseConfig,\
+  org.ileler.utils.mybatis.ServiceDBConfiguration

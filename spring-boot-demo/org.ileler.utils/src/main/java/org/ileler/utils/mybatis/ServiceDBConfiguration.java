@@ -25,7 +25,7 @@ import javax.sql.DataSource;
  * Author: kerwin612
  */
 @Configuration
-@ConditionalOnClass(SqlSessionTemplate.class)
+@ConditionalOnClass(DataSourceInitializer.class)
 //@ConditionalOnResource(resources = "classpath:mybatis-mybatis-mapper/*.xml")
 public class ServiceDBConfiguration {
 
@@ -34,7 +34,6 @@ public class ServiceDBConfiguration {
     @Bean(name = "sdbDataSource")
     @ConfigurationProperties(prefix = "datasource.sdb")
     public DataSource dbDataSource() {
-        LOGGER.info("111111111111111111111111111111111111");
         return DataSourceBuilder.create().build();
     }
 

@@ -1,13 +1,15 @@
 package org.ileler.utils.swagger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -19,9 +21,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * Author: kerwin612
  */
 @EnableSwagger2
-@Configuration
 @Profile({ "dev", "test" })
-public class SwaggerMVCConfiguration implements WebMvcConfigurer {
+@ConditionalOnClass(WebMvcConfigurerAdapter.class)
+public class SwaggerMVCConfiguration extends WebMvcConfigurerAdapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwaggerMVCConfiguration.class);
 
     @Value("${spring.application.name}")
     private String appName;
@@ -31,12 +35,14 @@ public class SwaggerMVCConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+        LOGGER.info("add swagger controller");
         registry.addViewController("/").setViewName("redirect:/swagger-ui.html");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
     @Bean
     public Docket docket() {
+        LOGGER.info("build swagger docket");
         return new Docket(DocumentationType.SWAGGER_2).groupName(appName).genericModelSubstitutes(DeferredResult.class)
                 // .genericModelSubstitutes(ResponseEntity.class)
                 .useDefaultResponseMessages(false).forCodeGeneration(false).pathMapping("/").select()
@@ -47,3 +53,4 @@ public class SwaggerMVCConfiguration implements WebMvcConfigurer {
     }
 
 }
+

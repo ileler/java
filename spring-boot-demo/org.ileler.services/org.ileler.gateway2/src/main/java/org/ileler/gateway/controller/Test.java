@@ -23,4 +23,14 @@ public class Test {
         return Mono.just(arg);
     }
 
+    @Value("${foo:}")
+    void value1(String value) {
+        System.out.println(value);
+    }
+
+    @Value("${gateway.default.redirect:}")
+    void value2(String value) {
+        System.out.println(value);
+    }
+
 }

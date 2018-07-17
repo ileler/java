@@ -1,14 +1,11 @@
 server:
   port: 11000
-logging.level.root: error
+logging.level.root: info
 logging.level.org.ileler: debug
-#logging.level.org.springframework.cloud.sleuth: debug
+logging.level.org.springframework.cloud.sleuth: debug
 spring:
-  zipkin:
-    base-url: http://localhost:10003
-  sleuth:
-    sampler:
-      percentage: 1.0
+  zipkin.sender.type: kafka
+  sleuth.sampler.percentage: 1.0
 zuul:
 #  ignoredServices: '*'
 #  ribbon:
