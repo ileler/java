@@ -1,3 +1,8 @@
 spring:
-  cloud.zookeeper.discovery.instanceIpAddress: 127.0.0.1
+  cloud:
+    config:
+#      allowOverride: true
+      override-system-properties: false
+#    zookeeper.discovery.instanceIpAddress: 127.0.0.1
   kafka.bootstrap-servers: 127.0.0.1:9092
+eureka.instance.hostname: 127.0.0.1
