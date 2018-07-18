@@ -1,5 +1,13 @@
 server:
   port: 10003
 logging.level.root: info
+#logging.level.zipkin2: debug
 logging.level.org.ileler: debug
+#logging.level.org.apache.kafka: debug
+logging.level.org.springframework.cloud.sleuth: debug
 management.metrics.web.server.auto-time-requests: false
+zipkin:
+  collector.kafka.bootstrap-servers: ${spring.kafka.bootstrap-servers:}
+  storage:
+    type: elasticsearch
+    elasticsearch.hosts: ${es..hosts:}

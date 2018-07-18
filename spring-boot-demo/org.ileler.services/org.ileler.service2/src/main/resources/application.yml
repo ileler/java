@@ -1,7 +1,9 @@
 server:
   port: 11002
 logging.level.root: error
+logging.level.zipkin2: debug
 logging.level.org.ileler: debug
+logging.level.org.apache.kafka: debug
 logging.level.org.springframework.cloud.sleuth: debug
 spring:
   zipkin.sender.type: kafka
