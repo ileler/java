@@ -6,3 +6,4 @@ spring:
 #    zookeeper.discovery.instanceIpAddress: 127.0.0.1
   kafka.bootstrap-servers: 127.0.0.1:9092
 eureka.instance.hostname: 127.0.0.1
+feign.hystrix.enabled: true

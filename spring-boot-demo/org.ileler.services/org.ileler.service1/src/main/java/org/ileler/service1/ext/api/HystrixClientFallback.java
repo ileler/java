@@ -11,7 +11,7 @@ public class HystrixClientFallback implements Service2API {
 
     @Override
     public String c1() {
-        return null;
+        return "Fallback-c2";
     }
 
 }

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 /**
  * Author: kerwin612
  */
-@FeignClient("org.ileler.service2")
+@FeignClient(name = "org.ileler.service2", fallback = HystrixClientFallback.class)
 public interface Service2API {
 
     @GetMapping("c1")

@@ -30,4 +30,10 @@ public class Demo {
         LOGGER.info("{}", this);
         return Mono.just(service1API.c1());
     }
+
+    @GetMapping("c3")
+    Mono<String> c3() {
+        LOGGER.info("{}", this);
+        return Mono.just(service1API.c2());
+    }
 }
