@@ -1,8 +1,5 @@
 server:
   port: 11000
-logging.level.root: info
-logging.level.org.ileler: debug
-logging.level.org.springframework.cloud.sleuth: debug
 spring:
   zipkin.sender.type: kafka
   sleuth.sampler.percentage: 1.0
