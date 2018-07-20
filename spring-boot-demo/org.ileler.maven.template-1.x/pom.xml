@@ -22,6 +22,40 @@
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <java.version>1.8</java.version>
         <skipTests>true</skipTests>
+        <bootstrap.profiles>
+            <![CDATA[
+---
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${eureka.zone:http://${eureka.address:127.0.0.1:10002}/eureka/}
+spring:
+  application:
+    name: '@project.artifactId@'
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: org.ileler.config
+---
+#开发环境配置
+spring.profiles: dev,default
+eureka.zone: http://127.0.0.1:10002/eureka/
+---
+#测试环境配置
+spring.profiles: test
+eureka.zone: http://127.0.0.1:10002/eureka/,http://127.0.0.1:10002/eureka/
+---
+#高仿环境配置
+spring.profiles: pre
+eureka.zone: http://127.0.0.1:10002/eureka/,http://127.0.0.1:10002/eureka/
+---
+#上线环境配置
+spring.profiles: online
+eureka.zone: http://127.0.0.1:10002/eureka/,http://127.0.0.1:10002/eureka/
+---
+            ]]>
+        </bootstrap.profiles>
     </properties>
 
     <distributionManagement>

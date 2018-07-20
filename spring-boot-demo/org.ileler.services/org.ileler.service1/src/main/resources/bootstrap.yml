@@ -1,12 +1,10 @@
+@bootstrap.profiles@
 eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${eureka.zone:http://${eureka.address:127.0.0.1:10002}/eureka/}
-spring:
-  application:
-    name: '@project.artifactId@'
-  cloud:
-    config:
-      discovery:
-        enabled: true
-        serviceId: org.ileler.config
+  instance:
+    appname: 66666
+---
+#开发环境配置
+spring.profiles: test
+eureka:
+  instance:
+    appname: 77777
