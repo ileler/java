@@ -1,4 +1,4 @@
-@bootstrap.profiles@
+@bootstrap.base@
 eureka:
   instance:
     appname: 66666
