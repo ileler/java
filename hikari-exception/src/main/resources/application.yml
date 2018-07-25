@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: '@project.artifactId@'
+  cloud:
+    config:
+      enabled: true
+    refresh.extra-refreshable:
+      - javax.sql.DataSource
+server:
+  port: 11001
+
+management.endpoints.web.exposure.include: "*"
+
+datasource.db:
+  driver-class-name: com.mysql.jdbc.Driver
+  jdbc-url: jdbc:mysql://172.16.2.6:3306?autoReconnect=true&autoReconnectForPools=true&failOverReadOnly=false
+  password: 123
+  username: root
