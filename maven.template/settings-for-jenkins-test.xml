@@ -4,35 +4,33 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
-    <localRepository>/home/ubuntu/maven_repo_springboot</localRepository>
+    <mirrors>
+        <mirror>
+            <id>nexus</id>
+            <name>internal nexus repository</name>
+            <url>http://localhost:8081/repository/maven-public/</url>
+            <mirrorOf>*</mirrorOf>
+        </mirror>
+    </mirrors>
 
     <servers>
         <server>
             <id>server1</id>
-            <username>user1</username>
+            <username>use1</username>
             <password>pwd1</password>
-            <configuration url="scp://172.16.x.xx:xx/home/user1/xxx">
+            <configuration url="scp://xxx.xx.x.xx:xx/home/user1/xxx">
                 <strictHostKeyChecking>no</strictHostKeyChecking>
             </configuration>
         </server>
         <server>
             <id>server2</id>
-            <username>user1</username>
+            <username>use1</username>
             <password>pwd1</password>
-            <configuration url="scp://172.16.x.xx:xx/home/user1/xxx">
+            <configuration url="scp://xxx.xx.x.xx:xx/home/user1/xxx">
                 <strictHostKeyChecking>no</strictHostKeyChecking>
             </configuration>
         </server>
     </servers>
-
-    <mirrors>
-        <mirror>
-            <id>nexus</id>
-            <name>internal nexus repository</name>
-            <url>http://172.16.x.xx:8081/repository/maven-public/</url>
-            <mirrorOf>central</mirrorOf>
-        </mirror>
-    </mirrors>
 
     <profiles>
         <profile>
@@ -41,7 +39,7 @@
                 <repository>
                     <id>nexus</id>
                     <name>local private nexus</name>
-                    <url>http://172.16.x.xx:8081/repository/maven-public/</url>
+                    <url>http://localhost:8080/nexus/content/groups/public</url>
                     <releases>
                         <enabled>true</enabled>
                         <updatePolicy>always</updatePolicy>
@@ -54,8 +52,8 @@
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
-                    <id>nexus</id>
-                    <url>http://172.16.x.xx:8081/repository/maven-public/</url>
+                    <id>central</id>
+                    <url>http://localhost:8080/nexus/content/groups/public</url>
                     <releases>
                         <enabled>true</enabled>
                         <updatePolicy>always</updatePolicy>
@@ -67,7 +65,6 @@
                 </pluginRepository>
             </pluginRepositories>
         </profile>
-
         <profile>
             <id>service1</id>
             <properties>
@@ -75,16 +72,29 @@
                 <service.dir>service1</service.dir>
                 <service.port>11000</service.port>
                 <service.dport>11005</service.dport>
+                <service.profile>test</service.profile>
                 <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
             </properties>
         </profile>
         <profile>
             <id>service2</id>
             <properties>
-                <service.sid>server2</service.sid>
+                <service.sid>server1</service.sid>
+                <service.port>11010</service.port>
+                <service.dport>11015</service.dport>
+                <service.profile>test</service.profile>
                 <service.dir>service2</service.dir>
-                <service.port>11000</service.port>
-                <service.dport>11005</service.dport>
+                <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
+            </properties>
+        </profile>
+        <profile>
+            <id>service3</id>
+            <properties>
+                <service.sid>server2</service.sid>
+                <service.port>11020</service.port>
+                <service.dport>11025</service.dport>
+                <service.profile>test</service.profile>
+                <service.dir>service3</service.dir>
                 <service.arg>-vmoptions "-Xms150m -Xmx300m" -clean</service.arg>
             </properties>
         </profile>
