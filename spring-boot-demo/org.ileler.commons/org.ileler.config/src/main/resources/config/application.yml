@@ -10,5 +10,15 @@ spring:
       override-system-properties: false
 #    zookeeper.discovery.instanceIpAddress: 127.0.0.1
   kafka.bootstrap-servers: 127.0.0.1:9092
+
 eureka.instance.hostname: 127.0.0.1
+
 feign.hystrix.enabled: true
+
+all-services: org.ileler.service1,org.ileler.service2
+
+batch:
+  config:
+    services: ${all-services}
+    - key-pattern: $sid.ribbon.NFLoadBalancerRuleClassName
+      value: org.ileler.utils.ribbon.DebugRule
