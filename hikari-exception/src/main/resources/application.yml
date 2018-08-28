@@ -4,8 +4,8 @@ spring:
   cloud:
     config:
       enabled: true
-    refresh.extra-refreshable:
-      - javax.sql.DataSource
+#    refresh.extra-refreshable:
+#      - javax.sql.DataSource
 server:
   port: 11001
 
