@@ -1,0 +1,168 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout norefresh="true" permission="${app.READ}" title="Settings-Manager-SBS">
+        <st:include page="sidepanel.jelly" it="${app}"/>
+
+        <j:set var="resourcesURL" value="${resURL}/plugin/Jenkins-Plugin-SBS"/>
+
+        <l:header>
+            <link rel="stylesheet" href="${resourcesURL}/css/jquery.dataTables.min.css"
+                  type="text/css" media="screen"/>
+            <link rel="stylesheet" href="${resourcesURL}/css/dataTables.editor.css"
+                  type="text/css" media="screen"/>
+            <link rel="stylesheet" href="${resourcesURL}/css/editor.dataTables.min.css"
+                  type="text/css" media="screen"/>
+            <link rel="stylesheet" href="${resourcesURL}/css/buttons.dataTables.min.css"
+                  type="text/css" media="screen"/>
+            <link rel="stylesheet" href="${resourcesURL}/css/select.dataTables.min.css"
+                  type="text/css" media="screen"/>
+            <link rel="stylesheet" href="${resourcesURL}/css/app.css"
+                  type="text/css" media="screen"/>
+
+            <script type="text/javascript"
+                    src="${resourcesURL}/js/lib/jquery-3.3.1.min.js"/>
+            <script type="text/javascript"
+                    src="${resourcesURL}/js/lib/jquery.dataTables.min.js"/>
+            <script type="text/javascript"
+                    src="${resourcesURL}/js/lib/dataTables.buttons.min.js"/>
+            <script type="text/javascript"
+                    src="${resourcesURL}/js/lib/dataTables.select.min.js"/>
+            <script type="text/javascript"
+                    src="${resourcesURL}/js/lib/dataTables.editor.min.js"/>
+            <script type="text/javascript"
+                    src="${resourcesURL}/js/app.js"/>
+
+            <script>
+                var controller = <st:bind value="${it.controller}"/>
+                var hasPermission = <st:bind value="${app.hasPermission(app.ADMINISTER)}"/>
+            </script>
+        </l:header>
+
+        <l:main-panel>
+
+            <h1>
+                <l:icon class="icon-terminal icon-xlg"/>NodePool View
+            </h1>
+
+            <p>
+                Use the following table to see how runs of Jenkins projects resulted in the creation of new Jenkins
+                nodes from NodePool.
+            </p>
+
+            <p>
+                (Note: <i>SUCCESS</i> means that for a given build of a job, it was able to successfully obtain node(s)
+                from NodePool, not necessarily that the job itself ran to a successful completion.)
+            </p>
+
+            <h2>Envs</h2>
+            <div style="overflow:auto">
+                <table id="envs-table" class="display compact" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Path</th>
+                            <th>Template</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <j:if test="${app.hasPermission(app.ADMINISTER)}">
+                    <div align="right" style="margin-top:0.5em">
+                        <a class="dt-button" onClick="addEnv()">
+                            <span>Add</span>
+                        </a>
+                    </div>
+                </j:if>
+            </div>
+
+            <hr style="margin: 20px 0px"/>
+
+            <h2>Servers</h2>
+            <j:set var="servers" value="${it.servers}"/>
+            <div style="overflow:auto">
+                <table id="servers-table" class="display compact" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Host</th>
+                            <th>Port</th>
+                            <th>SHome</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <j:forEach var="server" items="${servers}">
+                            <tr>
+                                <td>${server.fullDisplayName}</td>
+                                <td>${server.taskId}</td>
+                                <td>${server.buildNumber}</td>
+                                <td>${server.label}</td>
+                                <td>${server.nodePool}</td>
+                                <td>${server.nodePool}</td>
+                                <td class="dt-body-center">
+                                    <j:choose>
+                                        <j:when test="${!job.done}">In Progress</j:when>
+                                        <j:when test="${job.success}">Success</j:when>
+                                        <j:when test="${job.failure}">Failure</j:when>
+                                        <j:otherwise>In Progress</j:otherwise>
+                                    </j:choose>
+                                </td>
+                            </tr>
+                        </j:forEach>
+                    </tbody>
+                </table>
+                <j:if test="${app.hasPermission(app.ADMINISTER)}">
+                    <div align="right" style="margin-top:0.5em">
+                        <form method="post" action="addServer">
+                            <f:submit value="${%Add}"/>
+                        </form>
+                    </div>
+                </j:if>
+            </div>
+
+            <hr style="margin: 20px 0px"/>
+
+            <h2>Profiles</h2>
+            <j:set var="services" value="${it.services}"/>
+            <div style="overflow:auto">
+                <table id="services-table" class="display compact" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>SID</th>
+                            <th>Dir</th>
+                            <th>Port</th>
+                            <th>DPort</th>
+                            <th>Arg</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <j:forEach var="service" items="${services}">
+                            <tr>
+                                <td>${service.fullDisplayName}</td>
+                                <td>${service.taskId}</td>
+                                <td>${service.buildNumber}</td>
+                                <td>${service.label}</td>
+                                <td>${service.nodePool}</td>
+                                <td>${service.nodePool}</td>
+                            </tr>
+                        </j:forEach>
+                    </tbody>
+                </table>
+                <j:if test="${app.hasPermission(app.ADMINISTER)}">
+                    <div align="right" style="margin-top:0.5em">
+                        <form method="post" action="addService">
+                            <f:submit value="${%Add}"/>
+                        </form>
+                    </div>
+                </j:if>
+            </div>
+
+        </l:main-panel>
+    </l:layout>
+</j:jelly>
