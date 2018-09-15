@@ -19,6 +19,9 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.isAlreadyRouted;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.setAlreadyRouted;
 
+/**
+ * Author: kerwin612
+ */
 @Component
 @ConditionalOnProperty(value = "gateway.default.redirect", havingValue = "true")
 public class GlobalDefaultRedirectFilter implements GlobalFilter, Ordered {

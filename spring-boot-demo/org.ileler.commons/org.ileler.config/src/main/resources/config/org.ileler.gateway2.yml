@@ -1,0 +1,4 @@
+routes.mapping: {
+                	dync1: "http://test1.com",
+                	dync2: "lb://service_test"
+                }

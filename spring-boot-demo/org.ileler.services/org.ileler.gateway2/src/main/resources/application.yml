@@ -27,6 +27,13 @@ spring:
         - Path=/s2/**
         filters:
         - StripPrefix=1
+      - id: dynamic-mapping
+        uri: no://op
+        predicates:
+        - Path=/{prefix}/**
+        filters:
+        - StripPrefix=1
+        - ConfigToRequestUri=prefix
 #      - id: index-html
 #        predicates:
 #        - Path=**/index.html

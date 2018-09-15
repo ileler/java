@@ -1,4 +1,7 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   org.ileler.utils.swagger.SwaggerMVCConfiguration,\
   org.ileler.utils.mybatis.DataBaseConfig,\
-  org.ileler.utils.mybatis.ServiceDBConfiguration
+  org.ileler.utils.mybatis.ServiceDBConfiguration,\
+  org.ileler.utils.ServiceUtils,\
+  org.ileler.utils.endpoint.EndpointSecurity,\
+  org.ileler.utils.endpoint.EndpointSecurityForWebflux

@@ -28,6 +28,9 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Author: kerwin612
+ */
 @Component
 public class GlobalFileRoutingFilter implements GlobalFilter, Ordered {
 

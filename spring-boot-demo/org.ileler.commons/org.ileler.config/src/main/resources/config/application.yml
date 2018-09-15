@@ -15,6 +15,9 @@ eureka.instance.hostname: 127.0.0.1
 
 feign.hystrix.enabled: true
 
+management.endpoints.web.exposure.include: health,info,env
+security.endpoint.exclud: health,info
+
 all-services: org.ileler.service1,org.ileler.service2
 
 batch:
