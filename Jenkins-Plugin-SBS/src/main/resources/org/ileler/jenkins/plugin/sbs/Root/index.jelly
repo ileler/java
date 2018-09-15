@@ -64,8 +64,7 @@
                             <th>Template</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <j:if test="${app.hasPermission(app.ADMINISTER)}">
                     <div align="right" style="margin-top:0.5em">
@@ -79,7 +78,6 @@
             <hr style="margin: 20px 0px"/>
 
             <h2>Servers</h2>
-            <j:set var="servers" value="${it.servers}"/>
             <div style="overflow:auto">
                 <table id="servers-table" class="display compact" style="width:100%">
                     <thead>
@@ -94,32 +92,13 @@
                         </tr>
                     </thead>
 
-                    <tbody>
-                        <j:forEach var="server" items="${servers}">
-                            <tr>
-                                <td>${server.fullDisplayName}</td>
-                                <td>${server.taskId}</td>
-                                <td>${server.buildNumber}</td>
-                                <td>${server.label}</td>
-                                <td>${server.nodePool}</td>
-                                <td>${server.nodePool}</td>
-                                <td class="dt-body-center">
-                                    <j:choose>
-                                        <j:when test="${!job.done}">In Progress</j:when>
-                                        <j:when test="${job.success}">Success</j:when>
-                                        <j:when test="${job.failure}">Failure</j:when>
-                                        <j:otherwise>In Progress</j:otherwise>
-                                    </j:choose>
-                                </td>
-                            </tr>
-                        </j:forEach>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <j:if test="${app.hasPermission(app.ADMINISTER)}">
                     <div align="right" style="margin-top:0.5em">
-                        <form method="post" action="addServer">
-                            <f:submit value="${%Add}"/>
-                        </form>
+                        <a class="dt-button" onClick="addServer()">
+                            <span>Add</span>
+                        </a>
                     </div>
                 </j:if>
             </div>
@@ -127,7 +106,6 @@
             <hr style="margin: 20px 0px"/>
 
             <h2>Profiles</h2>
-            <j:set var="services" value="${it.services}"/>
             <div style="overflow:auto">
                 <table id="services-table" class="display compact" style="width:100%">
                     <thead>
@@ -141,24 +119,13 @@
                         </tr>
                     </thead>
 
-                    <tbody>
-                        <j:forEach var="service" items="${services}">
-                            <tr>
-                                <td>${service.fullDisplayName}</td>
-                                <td>${service.taskId}</td>
-                                <td>${service.buildNumber}</td>
-                                <td>${service.label}</td>
-                                <td>${service.nodePool}</td>
-                                <td>${service.nodePool}</td>
-                            </tr>
-                        </j:forEach>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
                 <j:if test="${app.hasPermission(app.ADMINISTER)}">
                     <div align="right" style="margin-top:0.5em">
-                        <form method="post" action="addService">
-                            <f:submit value="${%Add}"/>
-                        </form>
+                        <a class="dt-button" onClick="addService()">
+                            <span>Add</span>
+                        </a>
                     </div>
                 </j:if>
             </div>
