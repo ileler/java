@@ -27,6 +27,17 @@ public class Server implements Serializable {
         this.setUrl(url);
     }
 
+    public Server(String id, String host, Integer port, String shome, String username, String password, String configuration) {
+        this.configuration = configuration;
+        this.password = password;
+        this.username = username;
+        this.shome = shome;
+        this.port = port;
+        this.host = host;
+        this.id = id;
+        this.setUrl(url);
+    }
+
     private String id;
 
     private String url;

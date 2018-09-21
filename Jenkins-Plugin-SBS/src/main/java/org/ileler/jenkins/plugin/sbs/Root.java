@@ -2,18 +2,12 @@ package org.ileler.jenkins.plugin.sbs;
 
 import hudson.Extension;
 import hudson.model.RootAction;
-import jenkins.model.ModelObjectWithContextMenu;
+import org.ileler.jenkins.plugin.sbs.controller.EnvController;
+import org.ileler.jenkins.plugin.sbs.controller.ProfileController;
+import org.ileler.jenkins.plugin.sbs.controller.ServerController;
 import org.ileler.jenkins.plugin.sbs.dao.EnvDAO;
 import org.ileler.jenkins.plugin.sbs.dao.ProfileDAO;
 import org.ileler.jenkins.plugin.sbs.dao.ServerDAO;
-import org.ileler.jenkins.plugin.sbs.model.Env;
-import org.ileler.jenkins.plugin.sbs.model.Profile;
-import org.ileler.jenkins.plugin.sbs.model.Server;
-import org.ileler.jenkins.plugin.sbs.util.JsonDB;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
-import java.util.List;
 
 /**
  * @author kerwin612
@@ -33,10 +27,28 @@ public class Root implements RootAction {
         return "sbs-settings";
     }
 
-    private Controller controller = new Controller();
+    private EnvDAO envDAO = new EnvDAO();
 
-    public Controller getController() {
-        return controller;
+    private ServerDAO serverDAO = new ServerDAO(envDAO);
+
+    private ProfileDAO profileDAO = new ProfileDAO(envDAO, serverDAO);
+
+    private EnvController envController = new EnvController(envDAO);
+
+    private ServerController serverController = new ServerController(serverDAO);
+
+    private ProfileController profileController = new ProfileController(profileDAO);
+
+    public EnvController getEnvController() {
+        return envController;
+    }
+
+    public ServerController getServerController() {
+        return serverController;
+    }
+
+    public ProfileController getProfileController() {
+        return profileController;
     }
 
 }

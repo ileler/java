@@ -12,3 +12,7 @@ table tbody ul {
 table tbody li {
     padding: 0em;
 }
+
+div .toolbar {
+    display: inline;
+}

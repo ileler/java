@@ -17,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -45,6 +47,11 @@ public class SettingsDB {
         }
         synchronized (path) {
             File file = new File(path);
+            try {
+                document = new SAXReader().read(filePath = path);
+            } catch (Exception e) {
+                file.delete();
+            }
             if (!file.exists()) {
                 FileOutputStream fileOutputStream = null;
                 FileInputStream fileInputStream = null;
@@ -62,14 +69,17 @@ public class SettingsDB {
                         while((length = fileInputStream.read(bytes)) > 0) {
                             fileOutputStream.write(bytes, 0, length);
                         }
+                    } else {
+                        fileOutputStream.write(template.getBytes());
                     }
                 } finally {
                     if (fileInputStream != null) fileInputStream.close();
                     if (fileOutputStream != null) fileOutputStream.close();
                 }
+                document = new SAXReader().read(filePath = path);
             }
 
-            document = new SAXReader().read(filePath = path);
+
             Element settings = document.getRootElement();
             if (settings == null || !"settings".equalsIgnoreCase(settings.getName())) {
                 throw new IllegalArgumentException("template invalid.");

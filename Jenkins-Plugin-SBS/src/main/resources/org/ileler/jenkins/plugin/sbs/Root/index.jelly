@@ -30,29 +30,21 @@
             <script type="text/javascript"
                     src="${resourcesURL}/js/lib/dataTables.editor.min.js"/>
             <script type="text/javascript"
-                    src="${resourcesURL}/js/app.js"/>
+                    src="${resourcesURL}/js/env.js"/>
+            <script type="text/javascript"
+                    src="${resourcesURL}/js/server.js"/>
+            <script type="text/javascript"
+                    src="${resourcesURL}/js/service.js"/>
 
             <script>
-                var controller = <st:bind value="${it.controller}"/>
-                var hasPermission = <st:bind value="${app.hasPermission(app.ADMINISTER)}"/>
+                var hasPermission = false;
+                var envController = <st:bind value="${it.envController}"/>
+                var serverController = <st:bind value="${it.serverController}"/>
+                var profileController = <st:bind value="${it.profileController}"/>
             </script>
         </l:header>
 
         <l:main-panel>
-
-            <h1>
-                <l:icon class="icon-terminal icon-xlg"/>NodePool View
-            </h1>
-
-            <p>
-                Use the following table to see how runs of Jenkins projects resulted in the creation of new Jenkins
-                nodes from NodePool.
-            </p>
-
-            <p>
-                (Note: <i>SUCCESS</i> means that for a given build of a job, it was able to successfully obtain node(s)
-                from NodePool, not necessarily that the job itself ran to a successful completion.)
-            </p>
 
             <h2>Envs</h2>
             <div style="overflow:auto">
@@ -78,7 +70,7 @@
             <hr style="margin: 20px 0px"/>
 
             <h2>Servers</h2>
-            <div style="overflow:auto">
+            <div id="servers-table-div" style="overflow:auto">
                 <table id="servers-table" class="display compact" style="width:100%">
                     <thead>
                         <tr>
@@ -106,7 +98,7 @@
             <hr style="margin: 20px 0px"/>
 
             <h2>Profiles</h2>
-            <div style="overflow:auto">
+            <div id="services-table-div" style="overflow:auto">
                 <table id="services-table" class="display compact" style="width:100%">
                     <thead>
                         <tr>
@@ -130,6 +122,11 @@
                 </j:if>
             </div>
 
+            <j:if test="${app.hasPermission(app.ADMINISTER)}">
+                <script>
+                    hasPermission = true;
+                </script>
+            </j:if>
         </l:main-panel>
     </l:layout>
 </j:jelly>
