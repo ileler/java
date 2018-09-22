@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.ileler.request.service.mapping.MappingForGateway,\
+  org.ileler.request.service.mapping.MappingForOpenFeign,\
+  org.ileler.request.service.mapping.RuleConfiguration
