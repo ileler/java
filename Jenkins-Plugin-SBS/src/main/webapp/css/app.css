@@ -16,3 +16,7 @@ table tbody li {
 div .toolbar {
     display: inline;
 }
+
+div .console {
+    white-space: pre-line;
+}

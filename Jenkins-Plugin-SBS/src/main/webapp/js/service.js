@@ -66,7 +66,7 @@ $(document).ready((function () {
     });
 
     loadServices = function(currentEnv, currentserver) {
-        profileController.getBySID(currentEnv, currentserver, function(resp) {
+        profileController.getBySID(currentEnv, currentserver || null, function(resp) {
             var responseObject = resp.responseObject();
             servicesTable.clear();
             if (responseObject) {
@@ -79,10 +79,6 @@ $(document).ready((function () {
     saveService = function(title, data) {
         var currentEnv = $('#envSelect').val();
         var currentserver = $('#serverSelect').val();
-        if (!currentserver) {
-            alert('Please select a valid <server> first');
-            return false;
-        }
         var cb = function(resp) {
             loadServices(currentEnv, currentserver);
             this.close();
@@ -95,7 +91,12 @@ $(document).ready((function () {
             json.buttons.push({
                 label: "Save",
                 fn: function () {
-                    profileController.add(currentEnv, this.get('id'), this.get('sid'), this.get('dir'), this.get('arg'), this.get('port'), this.get('dPort'), cb.bind(this));
+                    var sid = this.get('sid');
+                    if (!sid) {
+                        alert('Please select a valid <sid> first');
+                        return false;
+                    }
+                    profileController.add(currentEnv, this.get('id'), sid, this.get('dir'), this.get('arg'), this.get('port'), this.get('dPort'), cb.bind(this));
                 }
             });
         }

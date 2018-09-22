@@ -58,7 +58,7 @@ $(document).ready((function () {
             serverController.valid($('#envSelect').val(), data.id, function(resp) {
                 var responseObject = resp.responseObject();
                 if (responseObject === 'success') {
-                    $('.oper', row).html('<b><span onClick="loginLogs('+data.id+')">login-logs</span> / <span onClick="operLogs('+data.id+')">oper-logs</span></b>');
+                    $('.oper', row).html('<b><span onClick="loginLogs(\''+data.id+'\')">login-logs</span> / <span onClick="operLogs(\''+data.id+'\')">oper-logs</span></b>');
                 } else {
                     $('.oper', row).html('<b title="'+responseObject+'">'+responseObject+'</b>');
                 }
@@ -69,15 +69,23 @@ $(document).ready((function () {
     loginLogs = function(id) {
         event.cancelBubble = true;
         serverController.loginLogs($('#envSelect').val(), id, function(resp) {
-            alert(resp.responseObject().out);
+            $('#serverDialog').html(resp.responseObject().out);
         });
+        serverDialog.create({
+            title: 'Login Logs'
+        });
+        $('#serverDialog').html('loading...');
     }
 
     operLogs = function(id) {
         event.cancelBubble = true;
         serverController.operLogs($('#envSelect').val(), id, function(resp) {
-            alert(resp.responseObject().out);
+            $('#serverDialog').html(resp.responseObject().out);
         });
+        serverDialog.create({
+            title: 'Oper Logs'
+        });
+        $('#serverDialog').html('loading...');
     }
 
     $("#servers-table-div .toolbar").html('<b>env: </b><select id="envSelect"></select>');
@@ -98,6 +106,7 @@ $(document).ready((function () {
             var responseObject = resp.responseObject();
             serversTable.clear();
             $('#serverSelect').empty();
+            $('#serverSelect').append('<option value="">All</option>');
             var options = [];
             if (responseObject && responseObject.length > 0) {
                 serversTable.rows.add(responseObject);
@@ -105,8 +114,9 @@ $(document).ready((function () {
                     $('#serverSelect').append('<option value="' + obj.id + '">' + obj.id + '</option>');
                     options.push({label: obj.id, value: obj.id});
                 });
-                loadServices(envName, responseObject[0].id);
+                // loadServices(envName, responseObject[0].id);
             }
+            loadServices(envName);
             serviceEditor.field('sid').update(options);
             serversTable.draw();
         });
@@ -156,5 +166,18 @@ $(document).ready((function () {
     }
 
     // loadServers();
+
+
+
+
+    serverDialog = new $.fn.dataTable.Editor({
+        template: '#serverDialog'
+    });
+    serverDialog.buttons([{
+        label: "Close",
+        fn: function () {
+            this.close();
+        }
+    }]);
 
 }).bind(this));

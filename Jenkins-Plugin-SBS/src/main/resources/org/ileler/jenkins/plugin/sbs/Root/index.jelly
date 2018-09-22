@@ -71,6 +71,7 @@
 
             <h2>Servers</h2>
             <div id="servers-table-div" style="overflow:auto">
+                <div id="serverDialog" class="console"></div>
                 <table id="servers-table" class="display compact" style="width:100%">
                     <thead>
                         <tr>

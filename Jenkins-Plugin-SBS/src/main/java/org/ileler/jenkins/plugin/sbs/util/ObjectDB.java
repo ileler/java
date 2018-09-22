@@ -18,13 +18,21 @@ import java.util.List;
  * Version:     1.0.0.0
  * Description: Initialize
  */
-public class JsonDB<T> {
+public class ObjectDB<T> {
+
+    private static final String DBDIR;
+
+    static {
+        String jenkinsHome = System.getenv("JENKINS_HOME");
+        DBDIR = (StringUtils.isEmpty(jenkinsHome) ? "." : jenkinsHome) + File.separator + "sbs-settings-db";
+        new File(DBDIR).mkdirs();
+    }
 
     private String name;
 
     private List<T> data;
 
-    public JsonDB(String name) {
+    public ObjectDB(String name) {
         if (StringUtils.isEmpty(name)) {
             throw new NullPointerException("name is null");
         }
@@ -59,7 +67,7 @@ public class JsonDB<T> {
 
     private void save() {
         try {
-            ObjectOutputStream objectOutput = new ObjectOutputStream(new FileOutputStream(this.name));
+            ObjectOutputStream objectOutput = new ObjectOutputStream(new FileOutputStream(DBDIR + File.separator + this.name));
             objectOutput.writeObject(data);
             objectOutput.close();
         } catch (Exception e) {
@@ -69,7 +77,7 @@ public class JsonDB<T> {
 
     private void load() {
         try {
-            File file = new File(this.name);
+            File file = new File(DBDIR + File.separator + this.name);
             if (!file.exists()) return;
             ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
             Object object = objectInputStream.readObject();

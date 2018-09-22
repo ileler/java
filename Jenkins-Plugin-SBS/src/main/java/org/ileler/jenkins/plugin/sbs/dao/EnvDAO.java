@@ -2,7 +2,7 @@ package org.ileler.jenkins.plugin.sbs.dao;
 
 import org.apache.commons.lang.StringUtils;
 import org.ileler.jenkins.plugin.sbs.model.Env;
-import org.ileler.jenkins.plugin.sbs.util.JsonDB;
+import org.ileler.jenkins.plugin.sbs.util.ObjectDB;
 
 import java.io.File;
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class EnvDAO {
 
-    private JsonDB<Env> jsonDB;
+    private ObjectDB<Env> jsonDB;
 
     public EnvDAO() {
-        jsonDB = new JsonDB<>("env");
+        jsonDB = new ObjectDB<>("env");
     }
 
     public Boolean add(Env env) {

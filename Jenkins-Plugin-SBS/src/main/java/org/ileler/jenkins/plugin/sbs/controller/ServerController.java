@@ -1,5 +1,7 @@
 package org.ileler.jenkins.plugin.sbs.controller;
 
+import hudson.security.Permission;
+import jenkins.model.Jenkins;
 import org.ileler.jenkins.plugin.sbs.dao.ServerDAO;
 import org.ileler.jenkins.plugin.sbs.model.Server;
 import org.ileler.jenkins.plugin.sbs.model.Streams;
@@ -44,11 +46,11 @@ public class ServerController {
     @JavaScriptMethod
     public List<Server> getByEnv(String env) {
         List<Server> servers = serverDAO.get(env);
-//        if (!hasPwd && servers != null) {
-//            for (Server server : servers) {
-//                server.setPassword("******");
-//            }
-//        }
+        if (!Jenkins.getInstance().hasPermission(Permission.WRITE) && servers != null) {
+            for (Server server : servers) {
+                server.setPassword("******");
+            }
+        }
         return servers;
     }
 
