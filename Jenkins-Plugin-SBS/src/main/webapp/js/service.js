@@ -41,7 +41,7 @@ $(document).ready((function () {
         // order: [[0, "asc"]],
         rowId: 'id',
         order: [],
-        dom: '<"toolbar">ftrip',
+        dom: '<"toolbar">lftrip',
         columns: [
             { data: "id" },
             { data: "sid" },
@@ -70,6 +70,9 @@ $(document).ready((function () {
             var responseObject = resp.responseObject();
             servicesTable.clear();
             if (responseObject) {
+                if (!currentserver) {
+                    this.envServices = responseObject;
+                }
                 servicesTable.rows.add(responseObject);
             }
             servicesTable.draw();

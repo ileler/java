@@ -35,6 +35,50 @@ $(document).ready((function () {
         ]
     });
 
+    varServicesTable = $('#server-var-services-table').DataTable({
+        rowId: 'id',
+        order: [],
+        dom: 't',
+        // retrieve: true,
+        columns: [
+            {data: "id"},
+            {data: "dir"},
+            {data: "port"},
+            {data: "dPort"},
+            {data: "arg"}
+        ]
+    });
+
+    runServicesTable = $('#server-run-services-table').DataTable({
+        rowId: 'pid',
+        order: [],
+        dom: 't',
+        // retrieve: true,
+        columns: [
+            {data: "pid"},
+            {data: "sid"},
+            {data: "detail"},
+            {
+                data: null,
+                className: "center",
+                defaultContent: '<div class="oper"><b><span id="kill">kill</span></b></div>'
+            }
+        ],
+        rowCallback: function(row, data) {
+            $('.oper #kill', row).off("click").css('color', 'red').attr('title', "kill this service.");
+            if (hasPermission) {
+                $('.oper #kill', row).click(function() {
+                    serverController.kill($('#envSelect').val(), data.server, data.pid, function(resp) {
+                        $('.oper #kill', row).html("killed").off("click");
+                    });
+                });
+            } else {
+                $('.oper #kill', row).css('color', '#C87272').attr('title', "do not have permissions.");
+            }
+        }
+    });
+
+
     serversTable = $('#servers-table').DataTable({
         // lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         // order: [[0, "asc"]],
@@ -58,13 +102,57 @@ $(document).ready((function () {
             serverController.valid($('#envSelect').val(), data.id, function(resp) {
                 var responseObject = resp.responseObject();
                 if (responseObject === 'success') {
-                    $('.oper', row).html('<b><span onClick="loginLogs(\''+data.id+'\')">login-logs</span> / <span onClick="operLogs(\''+data.id+'\')">oper-logs</span></b>');
+                    $('.oper', row).html('<b><span id="services">services</span> / <span onClick="loginLogs(\''+data.id+'\')">login-logs</span> / <span onClick="operLogs(\''+data.id+'\')">oper-logs</span></b>');
+                    serviceLoad($('.oper #services', row), data.id);
                 } else {
                     $('.oper', row).html('<b title="'+responseObject+'">'+responseObject+'</b>');
                 }
             });
         }
     });
+
+    serviceLoad = function(dom, sid) {
+        dom.attr('title', "service info loading...").css("color", "black").off("click");
+        serverController.services($('#envSelect').val(), sid, function(resp) {
+            var responseObject = resp.responseObject();
+            if (0 !== responseObject.exitCode) {
+                dom.attr('title', responseObject.err);
+            } else {
+                var skey = $('#envSelect').val() + '-' + sid;
+                this.services[skey] = [];
+                (responseObject.out || '').split('\n').each(function(service) {
+                    if (!service || !service.trim() || service.indexOf('sun.tools.jps.Jps') != -1) return;
+                    var pid = service.substring(0, service.indexOf(' '));
+                    var detail = service.substring(service.indexOf(' ') + 1);
+                    var pname = detail.match('/home/.*/(.*?)\.jar');
+                    this.services[skey].push({pid: pid, server: sid, detail: detail, sid: pname && pname.length > 1 ? pname[1] : null});
+                });
+                var required = this.envServices.filter(function(service) {
+                    return service.sid == sid;
+                });
+                dom.attr('title', "show services detail.").css("color", required.length == this.services[skey].length ? "green" : "#F48024").click(function() {
+                    event.cancelBubble = true;
+
+                    varServicesTable.clear();
+                    varServicesTable.rows.add(required);
+
+
+                    runServicesTable.clear();
+                    runServicesTable.rows.add(services[skey]);
+
+                    serviceDialog.create({
+                        title: 'Services Details'
+                    });
+                    serviceDialog.on('close', function() {
+                        serviceLoad(dom, sid);
+                        serviceDialog.off('close');
+                    });
+                    varServicesTable.draw();
+                    runServicesTable.draw();
+                });
+            }
+        });
+    }
 
     loginLogs = function(id) {
         event.cancelBubble = true;
@@ -174,6 +262,16 @@ $(document).ready((function () {
         template: '#serverDialog'
     });
     serverDialog.buttons([{
+        label: "Close",
+        fn: function () {
+            this.close();
+        }
+    }]);
+
+    serviceDialog = new $.fn.dataTable.Editor({
+        template: '#serviceDialog'
+    });
+    serviceDialog.buttons([{
         label: "Close",
         fn: function () {
             this.close();

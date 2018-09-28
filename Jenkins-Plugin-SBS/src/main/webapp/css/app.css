@@ -15,8 +15,14 @@ table tbody li {
 
 div .toolbar {
     display: inline;
+    float: left;
+    margin-right: 20px;
 }
 
 div .console {
     white-space: pre-line;
+}
+
+div .oper span {
+    cursor: pointer;
 }

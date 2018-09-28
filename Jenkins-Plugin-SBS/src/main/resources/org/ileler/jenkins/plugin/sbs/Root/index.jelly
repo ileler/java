@@ -72,6 +72,35 @@
             <h2>Servers</h2>
             <div id="servers-table-div" style="overflow:auto">
                 <div id="serverDialog" class="console"></div>
+                <div id="serviceDialog" class="console">
+                    <h3>Defined Services</h3>
+                    <table id="server-var-services-table" class="display compact" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Dir</th>
+                                <th>Port</th>
+                                <th>DPort</th>
+                                <th>Arg</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
+                    </table>
+                    <h3>Actual Services</h3>
+                    <table id="server-run-services-table" class="display compact" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>SID</th>
+                                <th>Detail</th>
+                                <th>Oper</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
+                    </table>
+                </div>
                 <table id="servers-table" class="display compact" style="width:100%">
                     <thead>
                         <tr>
