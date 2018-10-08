@@ -78,12 +78,14 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-gateway-core</artifactId>
+            <!--https://github.com/spring-cloud/spring-cloud-gateway/pull/448-->
             <version>2.0.1.RELEASE.LOCAL</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-openfeign-core</artifactId>
+            <!--https://github.com/spring-cloud/spring-cloud-openfeign/pull/50-->
             <version>2.0.1.RELEASE.LOCAL</version>
             <optional>true</optional>
         </dependency>
