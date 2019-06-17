@@ -145,6 +145,7 @@ _start() {
                 cd \$CURRENT_DIR
                 target_cmd="if [ -f pid ]; then\nkill -9 \\$""(cat pid) 2>/dev/null\nfi\nnohup \$EXEC 2>&1 > ./nohup.out &\necho \\$""! > pid"
                 echo -e "\$target_cmd" > start.last
+                chmod a+x start.last
                 _recovery \$UNTAIL_FLAG "\$@"
         fi
 }
