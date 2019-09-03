@@ -14,7 +14,7 @@
     <properties>
         <custom.package.skipCopyLib>true</custom.package.skipCopyLib>
         <custom.package.mainClass>${start-class}</custom.package.mainClass>
-        <custom.package.insideGroupIds>com.mpr</custom.package.insideGroupIds>
+        <custom.package.insideGroupIds>org.ileler</custom.package.insideGroupIds>
         <custom.package.libPath>${project.build.directory}/lib</custom.package.libPath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -171,7 +171,7 @@ eureka.address: 127.0.0.1:10002
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>copy-com.mpr.lib</id>
+                                <id>copy-org.ileler.lib</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>copy-dependencies</goal>
